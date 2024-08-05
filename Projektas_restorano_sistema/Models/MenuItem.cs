@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RestoranoSistema.Models
 {
-    internal class Tables
+    public abstract class MenuItem
     {
         public int Id { get; set; }
-        public int Seats { get; set; }
-        public bool IsReserved { get; set; }
-        public int WaiterId { get; set; }
+        public string Category { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
     }
 }

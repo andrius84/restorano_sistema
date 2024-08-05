@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace RestoranoSistema.Models
 {
-    internal class Order
+    public class Order
     {
         public int Id { get; set; }
-        public int TableId { get; set; }
-        public int WaiterId { get; set; }
-        public List<MenuItem> MenuItems { get; set; }
+        public Table TableId { get; set; }
+        public Table Seats { get; set; }
+        public List<Beverage> Beverages { get; set; }
+        public List<Dish> Dishes { get; set; }
         public DateTime OrderTime { get; set; }
-        public DateTime ServeTime { get; set; }
-        public bool IsServed { get; set; }
-        public bool IsPaid { get; set; }
         public decimal TotalPrice { get; set; }
     }
 }
