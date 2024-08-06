@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace RestoranoSistema.Services
 {
-    internal interface IOrderService
+    public interface IOrderService
     {
+        void CreateOrder();
     }
 }

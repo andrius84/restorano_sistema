@@ -8,7 +8,7 @@ namespace RestoranoSistema.Services
 {
     public interface IUserInterface
     {
-        void ShowMenu();
+        void ShowMainMenu();
         void ShowTablesOccupation();
 
     }

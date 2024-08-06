@@ -11,8 +11,8 @@ namespace RestoranoSistema.Models
         public int Id { get; set; }
         public Table TableId { get; set; }
         public Table Seats { get; set; }
-        public List<Beverage> Beverages { get; set; }
-        public List<Dish> Dishes { get; set; }
+        public List<Beverage>? Beverages { get; set; }
+        public List<Dish>? Dishes { get; set; }
         public DateTime OrderTime { get; set; }
         public decimal TotalPrice { get; set; }
     }

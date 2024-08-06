@@ -15,25 +15,29 @@ namespace RestoranoSistema.Services
         {
             while (true)
             {
-                var waiters = new List<Waiter>();
-                var waiterRepository = new WaitersRepository(waiters, "../../../Repositories/waiters.csv");
-                var waiterslist = waiterRepository.LoadWaitersList();
+                //var waiters = new List<Waiter>();
+                //var waitersRepository = new WaitersRepository(waiters, "../../../Repositories/waiters.csv");
+                //var waiterslist = waitersRepository.LoadWaitersList();
 
-                var tables = new List<Table>();
-                var tablesrepository = new TablesRepository(tables, "../../../Repositories/tables.csv");
-                var tableslist = tablesrepository.LoadTablesList();
+                var table = new Table();
+                var order = new Order();
 
-                var tableservice = new TableService(tableslist);
+                IItemsRepository itemsRepository = new ItemsRepository("../../../Repositories/food.csv", "../../../Repositories/drinks.csv");
+
+                var dish = new Dish(itemsRepository);
+                var beverage = new Beverage(itemsRepository);
+
+                ITableRepository tableRepository = new TablesRepository(table, "../../../Repositories/tables.csv");
+                ITableService tableService = new TableService(table, tableRepository);
+
+                IOrdersRepository ordersRepository = new OrdersRepository(order, "../../../Repositories/orders.json");
+                IOrderService orderService = new OrderService(order, ordersRepository, itemsRepository);
+
                 
-                var orders = new List<Order>();
-                var orderservice = new OrderService(orders);
 
-                var userinterface = new UserInterface(tableslist, tableservice, orderservice);
-                userinterface.ShowTablesOccupation();
-                Console.ReadKey();
-                userinterface.ShowMenu();
-                userinterface.ChooseTable();
-                userinterface.ShowTablesOccupation();
+                IUserInterface userinterface = new UserInterface(tableService, orderService, dish, beverage);
+
+                userinterface.ShowMainMenu();
 
                 Console.ReadKey();
 

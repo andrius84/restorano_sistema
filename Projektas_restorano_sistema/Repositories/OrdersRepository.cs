@@ -11,12 +11,13 @@ namespace RestoranoSistema.Repositories
     public class OrdersRepository : IOrdersRepository
     {
         private readonly Order _order;
-        public OrdersRepository(Order order)
+        private readonly string _filePath;
+        public OrdersRepository(Order order, string filePath)
         {
             _order = order;
-
+            _filePath = filePath;
         }
-        public void WriteOrderToJsonFile(Order order, string filePath)
+        public void WriteOrderToJsonFile(Order order)
         {
             // Serialize the order object to JSON format
             string jsonString = JsonSerializer.Serialize(order, new JsonSerializerOptions
@@ -25,25 +26,17 @@ namespace RestoranoSistema.Repositories
             });
 
             // Write the JSON string to a file
-            File.WriteAllText(filePath, jsonString);
+            File.WriteAllText(_filePath, jsonString);
         }
-        public List<Dish> LoadDishesListFromCsv()
+        public List<Order> ReadOrdersFromJsonFile()
         {
-            var dishes = new List<Dish>();
-            var lines = File.ReadAllLines("../../../Repositories/dishes.csv");
-            foreach (var line in lines)
-            {
-                var values = line.Split(',');
-                var dish = new Dish
-                {
-                    Id = int.Parse(values[0]),
-                    Name = values[1],
-                    Price = double.Parse(values[2])
-                };
-                dishes.Add(dish);
-            }
-            return dishes;
-        }
+            // Read the JSON string from a file
+            string jsonString = File.ReadAllText(_filePath);
+
+            // Deserialize the JSON string to a list of Order objects
+            List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
+
+            return orders;
         }
     }
 }
