@@ -11,6 +11,7 @@ namespace RestoranoSistema.Services
     {
         Table GetTable(int tableId);
         void MarkTableAsOccupied(int tableid);
+        void MarkTableAsFree(int tableid);
         void ChooseTable(int tableId);
     }
 }

@@ -33,9 +33,7 @@ namespace RestoranoSistema.Services
                 IOrdersRepository ordersRepository = new OrdersRepository(order, "../../../Repositories/orders.json");
                 IOrderService orderService = new OrderService(order, ordersRepository, itemsRepository);
 
-                
-
-                IUserInterface userinterface = new UserInterface(tableService, orderService, dish, beverage);
+                IUserInterface userinterface = new UserInterface(tableService, orderService, dish, beverage, order);
 
                 userinterface.ShowMainMenu();
 

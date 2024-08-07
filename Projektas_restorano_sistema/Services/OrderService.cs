@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
@@ -10,7 +11,7 @@ namespace RestoranoSistema.Services
 {
     public class OrderService : IOrderService
     {
-        private Order _order;
+        private readonly Order _order;
         private readonly IOrdersRepository _orderRepository;
         private readonly IItemsRepository _itemsRepository;
 
@@ -20,51 +21,57 @@ namespace RestoranoSistema.Services
             _orderRepository = ordersRepository;
             _itemsRepository = itemsRepository;
         }
-        public void CreateOrder()
+        public void CreateOrder(Order order)
         {
-            throw new NotImplementedException();
+            _orderRepository.AddOrderToJsonFile(order);
         }
-        public Dish AddFoodItemToOrder(int foodId)
+        public decimal CalculateOrderTotalPrice(Guid orderId)
         {
-            var foodList = _itemsRepository.GetFoodList();
-            var foodItem = foodList.FirstOrDefault(x => x.Id == foodId);
-            if (foodItem == null)
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
             {
-                throw new Exception("Food item not found");
+                throw new Exception("Order not found");
             }
-            _order.Dishes ??= new List<Dish>();
-            _order.Dishes.Add(foodItem);
-            return foodItem;
+            decimal totalPrice = 0;
+            if (order.Dishes != null)
+            {
+                totalPrice += order.Dishes.Sum(x => x.Price);
+            }
+            if (order.Beverages != null)
+            {
+                totalPrice += order.Beverages.Sum(x => x.Price);
+            }
+            return totalPrice;
         }
-        public Beverage AddBeverageItemToOrder(int beverageId)
+        public void AddDishToOrder(Guid orderId, Dish dish)
         {
-            var beverageList = _itemsRepository.GetBeverageList();
-            var beverageItem = beverageList.FirstOrDefault(x => x.Id == beverageId);
-            if (beverageItem == null)
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
             {
-                throw new Exception("Beverage item not found");
+                throw new Exception("Order not found");
             }
-            _order.Beverages ??= new List<Beverage>();
-            _order.Beverages.Add(beverageItem);
-            return beverageItem;
+            order.Dishes ??= new List<Dish>();
+            order.Dishes.Add(dish);
+            _orderRepository.UpdateOrderToJsonFile(order);
         }
-        public void RemoveFoodItemFromOrder(int foodId)
+        public void AddBeverageToOrder(Guid orderId, Beverage beverage)
         {
-            var foodItem = _order.Dishes.FirstOrDefault(x => x.Id == foodId);
-            if (foodItem == null)
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
             {
-                throw new Exception("Food item not found");
+                throw new Exception("Order not found");
             }
-            _order.Dishes.Remove(foodItem);
+            order.Beverages ??= new List<Beverage>();
+            order.Beverages.Add(beverage);
+            _orderRepository.UpdateOrderToJsonFile(order);
         }
-        public void RemoveBeverageItemFromOrder(int beverageId)
+        public List<Order> GetOrders()
         {
-            var beverageItem = _order.Beverages.FirstOrDefault(x => x.Id == beverageId);
-            if (beverageItem == null)
-            {
-                throw new Exception("Beverage item not found");
-            }
-            _order.Beverages.Remove(beverageItem);
+            return _orderRepository.ReadOrdersFromJsonFile();
+        }
+        public Guid GenerateOrderNumber()
+        {
+            return Guid.NewGuid();
         }
     }
 }
