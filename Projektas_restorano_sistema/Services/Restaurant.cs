@@ -37,9 +37,6 @@ namespace RestoranoSistema.Services
 
                 userinterface.ShowMainMenu();
 
-                Console.ReadKey();
-
-
 
             }
         }

@@ -23,7 +23,8 @@ namespace RestoranoSistema.Services
         }
         public void CreateOrder(Order order)
         {
-            _orderRepository.AddOrderToJsonFile(order);
+            _order.OrderTime = DateTime.Now;
+            _orderRepository.AddOrderToJsonFile(_order);
         }
         public decimal CalculateOrderTotalPrice(Guid orderId)
         {
@@ -42,6 +43,10 @@ namespace RestoranoSistema.Services
                 totalPrice += order.Beverages.Sum(x => x.Price);
             }
             return totalPrice;
+        }
+        public void UpdateOrder(Order order)
+        {
+            _orderRepository.UpdateOrderToJsonFile(order);
         }
         public void AddDishToOrder(Guid orderId, Dish dish)
         {
@@ -65,9 +70,33 @@ namespace RestoranoSistema.Services
             order.Beverages.Add(beverage);
             _orderRepository.UpdateOrderToJsonFile(order);
         }
+        public void DeleteDishFromOrder(Guid orderId, Dish dish)
+        {
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found");
+            }
+            order.Dishes.Remove(dish);
+            _orderRepository.UpdateOrderToJsonFile(order);
+        }
+        public void DeleteBeverageFromOrder(Guid orderId, Beverage beverage)
+        {
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found");
+            }
+            order.Beverages.Remove(beverage);
+            _orderRepository.UpdateOrderToJsonFile(order);
+        }
         public List<Order> GetOrders()
         {
             return _orderRepository.ReadOrdersFromJsonFile();
+        }
+        public Order GetOrderByTableId(int tableId)
+        {
+            return _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Table.Id == tableId);
         }
         public Guid GenerateOrderNumber()
         {

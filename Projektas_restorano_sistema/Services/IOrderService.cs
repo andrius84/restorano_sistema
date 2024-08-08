@@ -15,5 +15,11 @@ namespace RestoranoSistema.Services
         void AddBeverageToOrder(Guid orderId, Beverage beverage);
         List<Order> GetOrders();
         Guid GenerateOrderNumber();
+        void UpdateOrder(Order order);
+        Order GetOrderByTableId(int tableId);
+        void DeleteDishFromOrder(Guid orderId, Dish dish);
+        void DeleteBeverageFromOrder(Guid orderId, Beverage beverage);
+
+
     }
 }

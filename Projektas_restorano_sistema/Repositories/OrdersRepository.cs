@@ -19,89 +19,60 @@ namespace RestoranoSistema.Repositories
         }
         public void AddOrderToJsonFile(Order order)
         {
-            // Read the JSON string from a file
             string jsonString = File.ReadAllText(_filePath);
-
             List<Order> orders = new List<Order>();
-
             if (!string.IsNullOrEmpty(jsonString))
             {
-                // Deserialize the JSON string to a list of Order objects
                 orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
             }
-
-            // Add the new order to the list
             orders.Add(order);
-
-            // Serialize the list of Order objects to JSON format
             jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
             {
-                WriteIndented = true // to make the JSON output pretty-printed
+                WriteIndented = true
             });
-
-            // Write the JSON string to a file
             File.WriteAllText(_filePath, jsonString);
         }
         public List<Order> ReadOrdersFromJsonFile()
         {
-            // Read the JSON string from a file
             string jsonString = File.ReadAllText(_filePath);
-
             if (string.IsNullOrEmpty(jsonString))
             {
-                return new List<Order>();   
+                return new List<Order>();
             }
-            // Deserialize the JSON string to a list of Order objects
             List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
-
             return orders;
         }
         public void UpdateOrderToJsonFile(Order order)
         {
-            // Read the JSON string from a file
             string jsonString = File.ReadAllText(_filePath);
-
-            // Deserialize the JSON string to a list of Order objects
-            List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
-
-            // Find the order to update in the list
+            List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString) ?? new List<Order>();
             Order orderToUpdate = orders.FirstOrDefault(x => x.Id == order.Id);
-
-            // Update the order in the list
-            orderToUpdate = order;
-
-            // Serialize the list of Order objects to JSON format
-            jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
+            if (orderToUpdate != null)
             {
-                WriteIndented = true // to make the JSON output pretty-printed
-            });
-
-            // Write the JSON string to a file
-            File.WriteAllText(_filePath, jsonString);
+                orderToUpdate.Dishes = order.Dishes;
+                orderToUpdate.Beverages = order.Beverages;
+                orderToUpdate.TotalPrice = order.TotalPrice;
+                jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                File.WriteAllText(_filePath, jsonString);
+            }
         }
         public void DeleteOrderFromJsonFile(Order order)
         {
-            // Read the JSON string from a file
             string jsonString = File.ReadAllText(_filePath);
-
-            // Deserialize the JSON string to a list of Order objects
-            List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
-
-            // Find the order to delete in the list
-            Order orderToDelete = orders.FirstOrDefault(x => x.Id == order.Id);
-
-            // Remove the order from the list
-            orders.Remove(orderToDelete);
-
-            // Serialize the list of Order objects to JSON format
-            jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
+            List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString) ?? new List<Order>();
+            Order? orderToDelete = orders.FirstOrDefault(x => x.Id == order.Id);
+            if (orderToDelete != null)
             {
-                WriteIndented = true // to make the JSON output pretty-printed
-            });
-
-            // Write the JSON string to a file
-            File.WriteAllText(_filePath, jsonString);
-
+                orders.Remove(orderToDelete);
+                jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                File.WriteAllText(_filePath, jsonString);
+            }
         }
     }
 }

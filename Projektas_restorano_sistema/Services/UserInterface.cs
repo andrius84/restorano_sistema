@@ -23,7 +23,7 @@ namespace RestoranoSistema.Services
             Console.Clear();
             Console.WriteLine("Pasirinkite veiksma:");
             Console.WriteLine("");
-            Console.WriteLine("1. Kurti uzsakyma");
+            Console.WriteLine("1. Kurti nauja uzsakyma");
             Console.WriteLine("2. Koreguoti uzsakyma");
             Console.WriteLine("3. Apmoketi uzsakyma");
             Console.WriteLine("4. Atlaisvinti staliuka");
@@ -40,15 +40,32 @@ namespace RestoranoSistema.Services
                     _order.Table = _tableService.GetTable(tableId);
                     _order.Id = _orderService.GenerateOrderNumber();
                     _orderService.CreateOrder(_order);
-                    AddDishToOrder(_order);
-                    _order.TotalPrice = _orderService.CalculateOrderTotalPrice(_order.Id);
                     Console.WriteLine("Uzsakymas sukurtas!");
                     Console.ReadKey();
                     break;
                 case "2":
-                    Console.WriteLine("Koreguoti uzsakyma");
-                    Console.WriteLine("Pasirinkite uzsakyma, kuri norite koreguoti:");
                     ShowOrders();
+                    Console.WriteLine("Pasirinkite kurio staliuko uzsakyma koreguosite:");
+                    var table = ChooseTable();
+                    _order.Table = _tableService.GetTable(table);
+                    var order = _orderService.GetOrderByTableId(_order.Table.Id);
+                    _order.Id = order.Id;
+                    Console.WriteLine("Pasirinkite veiksma:");
+                    Console.WriteLine("1. Prideti patiekala ar gerima");
+                    Console.WriteLine("2. Istrinti patiekala ar gerima");    
+                    switch (Console.ReadLine())
+                    {
+                        case "1":
+                            AddFoodOrDrinkToOrder(order);
+                            break;
+                        case "2":
+                            DeleteFoodOrDrinkFromOrder(order);
+                            break;
+                        default:
+                            Console.WriteLine("Neteisingas pasirinkimas");
+                            break;
+                    }
+
                     break;
                 case "3":
                     Console.WriteLine("Apmoketi");
@@ -83,42 +100,28 @@ namespace RestoranoSistema.Services
         {
             var table = _tableService.GetTable(tableId);
             var status = table.IsOccupied ? "uzimtas" : "laisvas";
-            //var color = table.IsOccupied ? ConsoleColor.Red : ConsoleColor.Green;
-            //Console.ForegroundColor = color;
-            //Console.ResetColor();
             return status;
         }
         public int ChooseTable()
         {
-            Console.WriteLine("Pasirinkite staliuka:");
             var tableId = int.Parse(Console.ReadLine());
             return tableId;
         }
-        public void PrintDishes()
+        public void PrintDishesAndBeverages()
         {
             Console.Clear();
-            Console.WriteLine("PATIEKALAI:");
+            Console.WriteLine("MENIU:");
             var foodList = _dishes.Dishes().OrderBy(x => x.Id).ToList();
-            int count = 0;
-            foreach (var food in foodList)
-            {
-                Console.Write($"{food.Id}. {food.Name} - {food.Price}eur\t\t");
-                count++;
-                if (count % 5 == 0)
-                {
-                    Console.WriteLine();
-                }
-            }
-        }
-        public void PrintBeverages()
-        {
-            Console.Clear();
-            Console.WriteLine("GERIMAI:");
             var beverageList = _beverage.Beverages().OrderBy(x => x.Id).ToList();
+            var menu = foodList.Cast<MenuItem>().Concat(beverageList.Cast<MenuItem>()).ToList();
             int count = 0;
-            foreach (var beverage in beverageList)
+            int maxLineLength = 44; // Variable to store the maximum line length
+            foreach (var m in menu)
             {
-                Console.Write($"{beverage.Id}. {beverage.Name} - {beverage.Price}eur\t\t");
+                string line = $"{m.Id}. {m.Name} - {m.Price}eur";
+                int gapSize = maxLineLength - line.Length; // Calculate the gap size
+                Console.WriteLine(line);
+                Console.Write(new string(' ', gapSize)); // Add the gap at the end of the line
                 count++;
                 if (count % 5 == 0)
                 {
@@ -128,31 +131,91 @@ namespace RestoranoSistema.Services
         }
         public void ShowOrders()
         {
+            Console.Clear();
+            Console.WriteLine("UZSAKYMAI:");
             var orders = _orderService.GetOrders();
             foreach (var order in orders)
             {
                 Console.WriteLine($"Uzsakymo numeris: {order.Id}");
-                Console.WriteLine($"Staliuko numeris: {_order.Table.Id}");
+                Console.WriteLine($"Staliuko numeris: {order.Table.Id}");
                 Console.WriteLine($"Kaina: {order.TotalPrice}");
                 Console.WriteLine("");
             }
         }
-        public void AddDishToOrder(Order order)
+        public void ShowOrder(Order order)
+        {
+            Console.Clear();
+            Console.WriteLine("UZSAKYMAS:");
+            Console.WriteLine($"Uzsakymo numeris: {order.Id}");
+            Console.WriteLine($"Staliuko numeris: {order.Table.Id}");
+            Console.WriteLine($"Kaina: {order.TotalPrice}");
+            Console.WriteLine("");
+            Console.WriteLine("Patiekalai:");
+            if (order.Dishes != null && order.Dishes.Count > 0)
+            {
+                foreach (var dish in order.Dishes)
+                {
+                    Console.WriteLine($"{dish.Id}. {dish.Name} - {dish.Price}eur");
+                }
+            }
+            Console.WriteLine("");
+            Console.WriteLine("Gerimai:");
+            if (order.Beverages != null && order.Beverages.Count > 0)
+            {
+                foreach (var beverage in order.Beverages)
+                {
+                    Console.WriteLine($"{beverage.Id}. {beverage.Name} - {beverage.Price}eur");
+                }
+            }
+            Console.ReadKey();
+
+        }
+        public void AddFoodOrDrinkToOrder(Order order)
         {
             while (true)
             {
-                PrintDishes();
-                Console.WriteLine("Pasirinkite patiekala:");
-                var dishId = int.Parse(Console.ReadLine());
-                var dish = _dishes.Dishes().FirstOrDefault(x => x.Id == dishId);
-                _orderService.AddDishToOrder(_order.Id, dish);
-                Console.WriteLine("Patiekalas pridetas");
-                Console.WriteLine("Ar norite prideti dar viena patiekala? (ne - iseiti)");
-                var answer = Console.ReadLine();
-                if (answer == "ne")
+                PrintDishesAndBeverages();
+                Console.WriteLine("Pasirinkite patiekala ar gerima kuri norite prideti prie uzsakymo:");
+                var menuItemId = int.Parse(Console.ReadLine());
+                var menuItem = _dishes.Dishes().FirstOrDefault(x => x.Id == menuItemId) as MenuItem ?? _beverage.Beverages().FirstOrDefault(x => x.Id == menuItemId) as MenuItem;
+                if (menuItem == null)
                 {
-                    break;
+                    Console.WriteLine("Neteisingas pasirinkimas");
+                    continue;
                 }
+                if (menuItem is Dish dish)
+                {
+                    _orderService.AddDishToOrder(order.Id, dish);
+                }
+                else if (menuItem is Beverage beverage)
+                {
+                    _orderService.AddBeverageToOrder(order.Id, beverage);
+                }
+            }
+        }
+        public void DeleteFoodOrDrinkFromOrder(Order order)
+        {
+            while (true)
+            {
+                ShowOrder(order);
+                Console.WriteLine("Pasirinkite patiekala ar gerima kuri norite istrinti is uzsakymo:");
+                var menuItemId = int.Parse(Console.ReadLine());
+                var menuItem = _dishes.Dishes().FirstOrDefault(x => x.Id == menuItemId) as MenuItem ?? _beverage.Beverages().FirstOrDefault(x => x.Id == menuItemId) as MenuItem;
+                if (menuItem == null)
+                {
+                    Console.WriteLine("Neteisingas pasirinkimas");
+                    continue;
+                }
+                if (menuItem is Dish dish)
+                {
+                    _orderService.DeleteDishFromOrder(order.Id, dish);
+                }
+                else if (menuItem is Beverage beverage)
+                {
+                    _orderService.DeleteBeverageFromOrder(order.Id, beverage);
+                }
+                Console.WriteLine("Patiekalas ar gerimas istrintas is uzsakymo");
+                Console.ReadKey();
             }
         }
     }
