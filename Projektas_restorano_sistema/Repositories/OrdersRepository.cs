@@ -22,8 +22,13 @@ namespace RestoranoSistema.Repositories
             // Read the JSON string from a file
             string jsonString = File.ReadAllText(_filePath);
 
-            // Deserialize the JSON string to a list of Order objects
-            List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
+            List<Order> orders = new List<Order>();
+
+            if (!string.IsNullOrEmpty(jsonString))
+            {
+                // Deserialize the JSON string to a list of Order objects
+                orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
+            }
 
             // Add the new order to the list
             orders.Add(order);

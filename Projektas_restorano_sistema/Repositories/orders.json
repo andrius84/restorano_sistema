@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "0f68b6ba-a4bc-4371-83f1-66ea6b8bbecc",
+    "Table": {
+      "Id": 1,
+      "Seats": 6,
+      "IsOccupied": true
+    },
+    "Beverages": null,
+    "Dishes": null,
+    "OrderTime": "0001-01-01T00:00:00",
+    "TotalPrice": 0
+  },
+  {
+    "Id": "6bc2a0f0-4c5f-4b17-8dc4-69d5d2f92f19",
+    "Table": {
+      "Id": 2,
+      "Seats": 6,
+      "IsOccupied": true
+    },
+    "Beverages": null,
+    "Dishes": null,
+    "OrderTime": "0001-01-01T00:00:00",
+    "TotalPrice": 0
+  },
+  {
+    "Id": "ff184c9e-dbd9-40a4-91f4-48b1fb933eb0",
+    "Table": {
+      "Id": 3,
+      "Seats": 8,
+      "IsOccupied": true
+    },
+    "Beverages": null,
+    "Dishes": null,
+    "OrderTime": "0001-01-01T00:00:00",
+    "TotalPrice": 0
+  },
+  {
+    "Id": "297a6cae-618a-4d76-b7c4-617c992638a6",
+    "Table": {
+      "Id": 4,
+      "Seats": 8,
+      "IsOccupied": true
+    },
+    "Beverages": null,
+    "Dishes": null,
+    "OrderTime": "0001-01-01T00:00:00",
+    "TotalPrice": 0
+  }
+]
