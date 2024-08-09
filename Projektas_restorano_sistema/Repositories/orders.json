@@ -6,13 +6,38 @@
       "Seats": 8,
       "IsOccupied": true
     },
-    "Beverages": null,
+    "Beverages": [
+      {
+        "Id": 57,
+        "Category": " Beverages",
+        "Name": " Hot Chocolate",
+        "Price": 3.99
+      }
+    ],
     "Dishes": [
       {
         "Id": 32,
         "Category": " Desserts",
         "Name": " Creme Brulee",
         "Price": 6.99
+      },
+      {
+        "Id": 26,
+        "Category": " Desserts",
+        "Name": " Apple Pie",
+        "Price": 0
+      },
+      {
+        "Id": 23,
+        "Category": " Main Courses",
+        "Name": " Vegetable Stir Fry",
+        "Price": 0
+      },
+      {
+        "Id": 1,
+        "Category": " Appetizers",
+        "Name": " Bruschetta",
+        "Price": 5.99
       }
     ],
     "OrderTime": "2024-08-08T18:36:02.8712171+03:00",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace RestoranoSistema.Repositories
                 item.Id = int.TryParse(values[0] ?? "0", out int id) ? id : 0;
                 item.Category = values[1];
                 item.Name = values[2];
-                item.Price = decimal.TryParse(values[3]?.Replace(" ", "") ?? "0", out decimal price) ? price : 0;
+                item.Price = decimal.TryParse(values[3], NumberStyles.Float, CultureInfo.InvariantCulture, out decimal price) ? price : 0;
                 items.Add(item);
             }
             return items;
@@ -43,7 +44,7 @@ namespace RestoranoSistema.Repositories
                 item.Id = int.TryParse(values[0] ?? "0", out int id) ? id : 0;
                 item.Category = values[1];
                 item.Name = values[2];
-                item.Price = decimal.TryParse(values[3] ?? "0", out decimal price) ? price : 0;
+                item.Price = decimal.TryParse(values[3], NumberStyles.Float, CultureInfo.InvariantCulture, out decimal price) ? price : 0;
                 items.Add(item);
             }
             return items;
