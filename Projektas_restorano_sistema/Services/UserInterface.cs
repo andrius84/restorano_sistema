@@ -262,7 +262,7 @@ namespace RestoranoSistema.Services
         }
         public void DeleteFoodOrDrinkFromOrder(Order order)
         {
-            NotImplementedException();
+            throw new NotImplementedException();
         }
         public List<MenuItem> GetMenuItems()
         {
