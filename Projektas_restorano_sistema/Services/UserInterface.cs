@@ -11,10 +11,11 @@ using System.ComponentModel;
 
 namespace RestoranoSistema.Services
 {
-    public class UserInterface(ITableService tableService, IOrderService orderService, Dish dishes, Beverage beverage, Order order) : IUserInterface
+    public class UserInterface(ITableService tableService, IOrderService orderService, IReceiptService receiptService, Dish dishes, Beverage beverage, Order order) : IUserInterface
     {
         private readonly ITableService _tableService = tableService;
         private readonly IOrderService _orderService = orderService;
+        private readonly IReceiptService _receiptService = receiptService;
         private readonly Dish _dishes = dishes;
         private readonly Beverage _beverage = beverage;
         private readonly Order _order = order;
@@ -74,7 +75,15 @@ namespace RestoranoSistema.Services
 
                     break;
                 case "3":
-                    Console.WriteLine("Apmoketi");
+                    Console.Clear();
+                    ShowOrders();
+                    Console.WriteLine("Pasirinkite staliuko uzsakyma, kuri norite apmoketi:");
+                    var tableToPay = ChooseTable();
+                    _order.Table = _tableService.GetTable(tableToPay);
+                    var orderToPay = _orderService.GetOrderByTableId(_order.Table.Id);
+                    _receiptService.GenerateRestaurantReceipt(orderToPay);
+                    Console.WriteLine("Uzsakymas apmoketas");
+                    Console.ReadKey();
                     break;
                 case "4":
                     Console.Clear();
