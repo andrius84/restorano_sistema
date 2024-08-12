@@ -18,12 +18,12 @@ namespace RestoranoSistema.Repositories
         }
         public void SaveClientReceiptToFile(List<string> receiptLines)
         {
-            File.WriteAllLines(_filePath, receiptLines);
+            File.AppendAllLines(_filePath, receiptLines);
         }
 
         public void SaveRestaurantReceiptToFile(List<string> receiptLines)
         {
-            File.WriteAllLines(_filePath, receiptLines);
+            File.AppendAllLines(_filePath, receiptLines);
         }
     }
 }

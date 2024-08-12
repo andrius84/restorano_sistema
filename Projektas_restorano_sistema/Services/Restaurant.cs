@@ -15,10 +15,6 @@ namespace RestoranoSistema.Services
         {
             while (true)
             {
-                //var waiters = new List<Waiter>();
-                //var waitersRepository = new WaitersRepository(waiters, "../../../Repositories/waiters.csv");
-                //var waiterslist = waitersRepository.LoadWaitersList();
-
                 var table = new Table();
                 var order = new Order();
 
@@ -37,7 +33,6 @@ namespace RestoranoSistema.Services
                 IReceiptService receiptService = new ReceiptService(receiptRepository);
 
                 IUserInterface userinterface = new UserInterface(tableService, orderService, receiptService, dish, beverage, order);
-
 
                 userinterface.ShowMainMenu();
 

@@ -3,6 +3,8 @@ using RestoranoSistema.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,13 +23,13 @@ namespace RestoranoSistema.Services
             var lines = new List<string>
         {
             "----------------------------------------",
-            "               Client Receipt           ",
+            "                   Čekis                ",
             "----------------------------------------",
-            $"Order ID: {order.Id}",
-            $"Table: {order.Table.Id} (Seats: {order.Table.Seats})",
-            $"Order Time: {order.OrderTime.ToShortTimeString()}",
+            $"Užsakymo Nr.: {order.Id}",
+            $"Staliukas: {order.Table.Id} (Seats: {order.Table.Seats})",
+            $"Užsakymo laikas: {order.OrderTime.ToShortTimeString()}",
             "----------------------------------------",
-            "Items:"
+            "Patiekalai ir gėrimai:"
         };
             if (order.Dishes != null)
             {
@@ -46,9 +48,9 @@ namespace RestoranoSistema.Services
             lines.AddRange(new[]
             {
             "----------------------------------------",
-            $"Total Price:       ${order.TotalPrice:F2}",
+            $"Visa kaina:       ${order.TotalPrice:F2}",
             "----------------------------------------",
-            "Thank you for dining with us!"
+            "Ačiū, kad renkatės mūsų restoraną!"
         });
             return lines;
         }
@@ -57,13 +59,13 @@ namespace RestoranoSistema.Services
             var lines = new List<string>
         {
             "----------------------------------------",
-            "            Restaurant Receipt          ",
+            "            Kvitas restoranui           ",
             "----------------------------------------",
-            $"Order ID: {order.Id}",
-            $"Table: {order.Table.Id} (Seats: {order.Table.Seats})",
-            $"Order Time: {order.OrderTime.ToShortTimeString()}",
+            $"Užsakymo numeris: {order.Id}",
+            $"Staliukas: {order.Table.Id} (Seats: {order.Table.Seats})",
+            $"Užsakymo laikas: {order.OrderTime.ToShortTimeString()}",
             "----------------------------------------",
-            "Items:"
+            "Patiekalai ir gėrimai:"
         };
             if (order.Dishes != null)
             {
@@ -82,11 +84,34 @@ namespace RestoranoSistema.Services
             lines.AddRange(new[]
             {
             "----------------------------------------",
-            $"Total Price:       ${order.TotalPrice:F2}",
+            $"Galutinė kaina:   ${order.TotalPrice:F2}",
             "----------------------------------------"
         });
             _receiptRepository.SaveRestaurantReceiptToFile(lines);
             return lines;
+        }
+        public void SendClientReceiptToEmail(Order order, string clientEmail)
+        {
+            // Generate the receipt
+            var receiptLines = GenerateClientReceipt(order);
+            var receiptBody = string.Join(Environment.NewLine, receiptLines);
+
+            // Set up the email message
+            var mailMessage = new MailMessage("andrius.asmanavicius@gmail.com", clientEmail)
+            {
+                Subject = "Your Receipt from Our Restaurant",
+                Body = receiptBody
+            };
+
+            // Set up the SMTP client
+            using (var smtpClient = new SmtpClient("smtp.example.com", 587))
+            {
+                smtpClient.Credentials = new NetworkCredential("your-email@example.com", "your-email-password");
+                smtpClient.EnableSsl = true;
+
+                // Send the email
+                smtpClient.Send(mailMessage);
+            }
         }
     }
 }

@@ -11,5 +11,6 @@ namespace RestoranoSistema.Services
     {
         List<string> GenerateClientReceipt(Order order);
         List<string> GenerateRestaurantReceipt(Order order);
+        void SendClientReceiptToEmail(Order order, string clientEmail);
     }
 }

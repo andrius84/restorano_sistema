@@ -48,6 +48,15 @@ namespace RestoranoSistema.Services
         {
             _orderRepository.UpdateOrderToJsonFile(order);
         }
+        public void DeleteOrder(Guid orderId)
+        {
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found");
+            }
+            _orderRepository.DeleteOrderFromJsonFile(order);
+        }
         public void AddDishToOrder(Guid orderId, Dish dish)
         {
             var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);

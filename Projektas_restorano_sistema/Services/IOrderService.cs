@@ -11,11 +11,12 @@ namespace RestoranoSistema.Services
     {
         void CreateOrder(Order order);
         decimal CalculateOrderTotalPrice(Guid orderId);
+        void UpdateOrder(Order order);
+        void DeleteOrder(Guid orderId);
         void AddDishToOrder(Guid orderId, Dish dish);
         void AddBeverageToOrder(Guid orderId, Beverage beverage);
         List<Order> GetOrders();
         Guid GenerateOrderNumber();
-        void UpdateOrder(Order order);
         Order GetOrderByTableId(int tableId);
         void DeleteDishFromOrder(Guid orderId, Dish dish);
         void DeleteBeverageFromOrder(Guid orderId, Beverage beverage);
