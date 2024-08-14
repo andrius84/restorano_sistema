@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
+using RestoranoSistema.Repositories.Interfaces;
 
 
 namespace RestoranoSistema.Repositories
@@ -16,14 +17,29 @@ namespace RestoranoSistema.Repositories
         {
             _filePath = filePath;
         }
+
         public void SaveClientReceiptToFile(List<string> receiptLines)
         {
-            File.AppendAllLines(_filePath, receiptLines);
+            try
+            {
+                File.AppendAllLines(_filePath, receiptLines);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Įvyko klaida išsaugant kliento kvitą: {ex.Message}");
+            }
         }
 
         public void SaveRestaurantReceiptToFile(List<string> receiptLines)
         {
-            File.AppendAllLines(_filePath, receiptLines);
+            try
+            {
+                File.AppendAllLines(_filePath, receiptLines);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Įvyko klaida išsaugant restorano kvitą: {ex.Message}");
+            }
         }
     }
 }

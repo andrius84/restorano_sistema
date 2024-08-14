@@ -9,8 +9,7 @@ namespace RestoranoSistema.Repositories
 {
     public interface ITableRepository
     {
-        string[] LoadTables();
-
+        List<Table> LoadTables();
         void SaveTables(Table table);
 
     }

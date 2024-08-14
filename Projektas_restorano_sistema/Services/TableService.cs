@@ -12,27 +12,15 @@ namespace RestoranoSistema.Services
     public class TableService : ITableService
     {
         private readonly ITableRepository _tableRepository;
-        private readonly Table _table;
-        public TableService(Table table, ITableRepository tableRepository)
+        public TableService(ITableRepository tableRepository)
         {
             _tableRepository = tableRepository;
-            _table = table;
         }
         public Table GetTable(int tableId)
         {
             var tables = _tableRepository.LoadTables();
-            foreach (var table in tables)
-            {
-                var tableData = table.Split(';');
-                if (int.Parse(tableData[0]) == tableId)
-                {
-                    _table.Id = int.Parse(tableData[0]);
-                    _table.Seats = int.Parse(tableData[1]);
-                    _table.IsOccupied = bool.Parse(tableData[2]);
-                    return _table;
-                }
-            }
-            return null;
+            var table = tables.FirstOrDefault(t => t.Id == tableId);
+            return table;
         }
         public void MarkTableAsOccupied(int tableid)
         {

@@ -6,25 +6,24 @@ using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
 using RestoranoSistema.Repositories;
+using RestoranoSistema.Services.Interfaces;
 
 namespace RestoranoSistema.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly Order _order;
         private readonly IOrdersRepository _orderRepository;
-        private readonly IItemsRepository _itemsRepository;
-
-        public OrderService(Order order, IOrdersRepository ordersRepository, IItemsRepository itemsRepository)
+        public OrderService(IOrdersRepository ordersRepository)
         {
-            _order = order;
             _orderRepository = ordersRepository;
-            _itemsRepository = itemsRepository;
         }
-        public void CreateOrder(Order order)
+        public void CreateOrder(Table table)
         {
-            _order.OrderTime = DateTime.Now;
-            _orderRepository.AddOrderToJsonFile(_order);
+            var order = new Order();
+            order.Id = Guid.NewGuid();
+            order.OrderTime = DateTime.Now;
+            order.Table = table;
+            _orderRepository.AddOrderToJsonFile(order);
         }
         public decimal CalculateOrderTotalPrice(Guid orderId)
         {
@@ -86,7 +85,7 @@ namespace RestoranoSistema.Services
             {
                 throw new Exception("Order not found");
             }
-            order.Dishes.Remove(dish);
+            order.Dishes.RemoveAll(d => d.Id == dish.Id);
             _orderRepository.UpdateOrderToJsonFile(order);
         }
         public void DeleteBeverageFromOrder(Guid orderId, Beverage beverage)
@@ -96,7 +95,7 @@ namespace RestoranoSistema.Services
             {
                 throw new Exception("Order not found");
             }
-            order.Beverages.Remove(beverage);
+            order.Beverages.RemoveAll(b => b.Id == beverage.Id);
             _orderRepository.UpdateOrderToJsonFile(order);
         }
         public List<Order> GetOrders()
@@ -107,9 +106,18 @@ namespace RestoranoSistema.Services
         {
             return _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Table.Id == tableId);
         }
-        public Guid GenerateOrderNumber()
+        public Order GetOrderById(Guid orderId)
         {
-            return Guid.NewGuid();
+            return _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+        }
+        public void AddTotalPriceToOrder(Guid orderId)
+        {
+            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found");
+            }
+            _orderRepository.UpdateOrderToJsonFile(order);
         }
     }
 }

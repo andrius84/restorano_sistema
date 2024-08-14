@@ -9,32 +9,54 @@ using RestoranoSistema.Models;
 namespace RestoranoSistema.Repositories
 {
     public class TablesRepository : ITableRepository
-    { 
+    {
         private string _filePath;
-        private Table _table;
-        public TablesRepository(Table table, string filepath)
+        public TablesRepository(string filepath)
         {
             _filePath = filepath;
-            _table = table;
         }
-        public string[] LoadTables()
+        public List<Table> LoadTables()
         {
-            var lines = File.ReadAllLines(_filePath);
-            return lines;  
+            List<Table> tables = new List<Table>();
+            try
+            {
+                var lines = File.ReadAllLines(_filePath);
+                foreach (var line in lines)
+                {
+                    var tableData = line.Split(';');
+                    Table table = new Table();
+                    table.Id = int.Parse(tableData[0]);
+                    table.Seats = int.Parse(tableData[1]);
+                    table.IsOccupied = bool.Parse(tableData[2]);
+                    tables.Add(table);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Įvyko klaida nuskaitant failą: " + ex.Message);
+            }
+            return tables;
         }
         public void SaveTables(Table table)
         {
-            var lines = File.ReadAllLines(_filePath);
-            for (int i = 0; i < lines.Length; i++)
+            try
             {
-                var tableData = lines[i].Split(';');
-                if (int.Parse(tableData[0]) == table.Id)
+                var lines = File.ReadAllLines(_filePath);
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    lines[i] = table.Id + ";" + table.Seats + ";" + table.IsOccupied;
-                    break;
+                    var tableData = lines[i].Split(';');
+                    if (int.Parse(tableData[0]) == table.Id)
+                    {
+                        lines[i] = table.Id + ";" + table.Seats + ";" + table.IsOccupied;
+                        break;
+                    }
                 }
+                File.WriteAllLines(_filePath, lines);
             }
-            File.WriteAllLines(_filePath, lines);
+            catch (Exception ex)
+            {
+                Console.WriteLine("Įvyko klaida išsaugant failą: " + ex.Message);
+            }
         }
     }
 }

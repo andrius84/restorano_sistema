@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestoranoSistema.Services
+namespace RestoranoSistema.UI.Interfaces
 {
-    public interface IRestaurant
+    public interface IUserInterface
     {
-        void Start();
+        void ShowMainMenu();
     }
 }

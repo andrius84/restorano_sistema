@@ -1,4 +1,4 @@
-﻿using RestoranoSistema.Services;
+﻿using RestoranoSistema;
 
 namespace Projektas_restorano_sistema
 {
