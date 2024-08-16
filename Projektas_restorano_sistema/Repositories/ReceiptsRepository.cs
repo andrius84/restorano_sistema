@@ -9,11 +9,11 @@ using RestoranoSistema.Repositories.Interfaces;
 
 namespace RestoranoSistema.Repositories
 {
-    public class ReceiptRepository : IReceiptRepository
+    public class ReceiptsRepository : IReceiptRepository
     {
         private readonly string _filePath;
 
-        public ReceiptRepository(string filePath)
+        public ReceiptsRepository(string filePath)
         {
             _filePath = filePath;
         }

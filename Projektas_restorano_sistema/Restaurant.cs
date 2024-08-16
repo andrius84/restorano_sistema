@@ -24,13 +24,13 @@ namespace RestoranoSistema
                 IItemsService itemsService = new ItemsService(itemsRepository);
 
                 ITableRepository tableRepository = new TablesRepository("../../../Data/tables.csv");
-                ITableService tableService = new TableService(tableRepository);
+                ITablesService tableService = new TablesService(tableRepository);
 
                 IOrdersRepository ordersRepository = new OrdersRepository("../../../Data/orders.json");
-                IOrderService orderService = new OrderService(ordersRepository);
+                IOrdersService orderService = new OrdersService(ordersRepository);
 
-                IReceiptRepository receiptRepository = new ReceiptRepository("../../../Data/receipts.csv");
-                IReceiptService receiptService = new ReceiptService(receiptRepository);
+                IReceiptRepository receiptRepository = new ReceiptsRepository("../../../Data/receipts.csv");
+                IReceiptsService receiptService = new ReceiptsService(receiptRepository);
 
                 IUserInterface userinterface = new UserInterface(tableService, orderService, receiptService, itemsService);
 

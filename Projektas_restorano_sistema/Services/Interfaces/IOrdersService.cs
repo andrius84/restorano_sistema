@@ -7,7 +7,7 @@ using RestoranoSistema.Models;
 
 namespace RestoranoSistema.Services.Interfaces
 {
-    public interface IOrderService
+    public interface IOrdersService
     {
         void CreateOrder(Table table);
         decimal CalculateOrderTotalPrice(Guid orderId);

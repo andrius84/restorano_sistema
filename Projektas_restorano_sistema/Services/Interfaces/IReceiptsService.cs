@@ -7,7 +7,7 @@ using RestoranoSistema.Models;
 
 namespace RestoranoSistema.Services
 {
-    public interface IReceiptService
+    public interface IReceiptsService
     {
         List<string> GenerateClientReceipt(Order order);
         List<string> GenerateRestaurantReceipt(Order order);

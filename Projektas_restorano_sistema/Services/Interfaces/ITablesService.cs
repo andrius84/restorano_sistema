@@ -7,7 +7,7 @@ using RestoranoSistema.Models;
 
 namespace RestoranoSistema.Services
 {
-    public interface ITableService
+    public interface ITablesService
     {
         Table GetTable(int tableId);
         void MarkTableAsOccupied(int tableid);

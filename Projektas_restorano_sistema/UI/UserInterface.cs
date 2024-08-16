@@ -15,22 +15,24 @@ using RestoranoSistema.UI.Interfaces;
 
 namespace RestoranoSistema.UI
 {
-    public class UserInterface(ITableService tableService, IOrderService orderService, IReceiptService receiptService, IItemsService itemService) : IUserInterface
+    public class UserInterface(ITablesService tableService, IOrdersService orderService, IReceiptsService receiptService, IItemsService itemService) : IUserInterface
     {
-        private readonly ITableService _tableService = tableService;
-        private readonly IOrderService _orderService = orderService;
-        private readonly IReceiptService _receiptService = receiptService;
+        private readonly ITablesService _tableService = tableService;
+        private readonly IOrdersService _orderService = orderService;
+        private readonly IReceiptsService _receiptService = receiptService;
         private readonly IItemsService _itemService = itemService;
         public void ShowMainMenu()
         {
             Console.Clear();
             PrintHeader();
-            Console.WriteLine("1. Kurti naują užsakymą");
-            Console.WriteLine("2. Pildyti/koreguoti užsakymą");
-            Console.WriteLine("3. Apmokėti užsakymą");
-            Console.WriteLine("4. Ištrinti užsakymą");
-            Console.WriteLine("5. Atlaisvinti staliuką");
-            Console.WriteLine("6. Išjungti programą");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("1. == Kurti naują užsakymą           ==");
+            Console.WriteLine("2. == Pildyti/koreguoti užsakymą     ==");
+            Console.WriteLine("3. == Apmokėti užsakymą              ==");
+            Console.WriteLine("4. == Ištrinti užsakymą              ==");
+            Console.WriteLine("5. == Atlaisvinti staliuką           ==");
+            Console.WriteLine("6. == Išjungti programą              ==");
+            Console.ResetColor();
             Console.WriteLine("");
             Console.Write("Pasirinkite veiksmą: ");
             var option = Console.ReadLine();
@@ -100,8 +102,8 @@ namespace RestoranoSistema.UI
         {
             Console.Clear();
             PrintHeader();
-            Console.WriteLine("1. Pridėti patiekalą ar gėrimą prie užsakymo");
-            Console.WriteLine("2. Pašalinti patiekalą ar gėrimą iš užsakymo");
+            Console.WriteLine("1. == Pridėti patiekalą ar gėrimą prie užsakymo ==");
+            Console.WriteLine("2. == Pašalinti patiekalą ar gėrimą iš užsakymo ==");
             Console.WriteLine("");
             Console.Write("Pasirinkite veiksmą: ");
             switch (Console.ReadLine())
@@ -176,6 +178,12 @@ namespace RestoranoSistema.UI
             var tableToPay = ChooseTable();
             var tableObj = _tableService.GetTable(tableToPay);
             var orderToPay = _orderService.GetOrderByTableId(tableObj.Id);
+            if (orderToPay.TotalPrice <= 0)
+            {
+                Console.WriteLine("Užsakymas neturi patiekalų arba gerimų, pridėkite..");
+                Console.ReadKey();
+                return;
+            }
             _receiptService.GenerateRestaurantReceipt(orderToPay);
             _tableService.MarkTableAsFree(tableToPay);
             Console.WriteLine("Užsakymas apmokėtas");
@@ -183,7 +191,11 @@ namespace RestoranoSistema.UI
             var answer = Console.ReadLine();
             if (answer == "taip")
             {
-                _receiptService.GenerateClientReceipt(orderToPay);
+                var receipt = _receiptService.GenerateClientReceipt(orderToPay);
+                foreach (var line in receipt)
+                {
+                    Console.WriteLine(line);
+                }
             }
             if (answer == "ne")
             {
@@ -217,6 +229,8 @@ namespace RestoranoSistema.UI
             PrintHeader();
             ShowTablesOccupation();
             Console.WriteLine("Pasirinkite staliuką, kurį norite atlaisvinti:");
+            Console.WriteLine("Arba įveskite 'q' jei norite grįžti į pagrindinį langą.");
+            Console.WriteLine("");
             var tableIdf = ChooseTable();
             _tableService.MarkTableAsFree(tableIdf);
             Console.WriteLine("Staliukas atlaisvintas");
@@ -241,6 +255,11 @@ namespace RestoranoSistema.UI
         public int ChooseTable()
         {
             var input = Console.ReadLine();
+            if (input == "q")
+            {
+                ShowMainMenu();
+                return 0;
+            }
             if (int.TryParse(input, out int tableId))
             {
                 return tableId;
@@ -254,6 +273,7 @@ namespace RestoranoSistema.UI
         public void ShowDishesAndBeverages()
         {
             Console.WriteLine("MENIU:");
+            Console.WriteLine("");
             var menu = GetMenuItems();
             int count = 0;
             int maxLineLength = 42;
@@ -261,10 +281,23 @@ namespace RestoranoSistema.UI
             {
                 string line = $"{m.Id}. {m.Name} - {m.Price}eur";
                 int gapSize = maxLineLength - line.Length;
-                Console.Write(line);
-                Console.Write(new string(' ', gapSize));
+                if (m.Id < 16)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(line);
+                    Console.Write(new string(' ', gapSize));
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.Write(line);
+                    Console.Write(new string(' ', gapSize));
+                    Console.ResetColor();
+                }
+
                 count++;
-                if (count % 5 == 0)
+                if (count % 2 == 0)
                 {
                     Console.WriteLine();
                 }
@@ -277,7 +310,8 @@ namespace RestoranoSistema.UI
         public void ShowOrders()
         {
             Console.Clear();
-            Console.WriteLine("UŽSAKYMAI:");
+            Console.WriteLine("AKTYVŪS UŽSAKYMAI:");
+            Console.WriteLine("");
             var orders = _orderService.GetOrders();
             foreach (var order in orders)
             {
@@ -285,15 +319,18 @@ namespace RestoranoSistema.UI
                 Console.WriteLine($"Staliuko numeris: {order.Table.Id}");
                 Console.WriteLine($"Kaina: {order.TotalPrice}");
                 Console.WriteLine("=======================================");
+                Console.WriteLine("");
             }
         }
         public void ShowOrder(Order order)
         {
             Console.WriteLine("UŽSAKYMAS:");
+            Console.WriteLine("");
             Console.WriteLine($"Užsakymo numeris: {order.Id}");
             Console.WriteLine($"Staliuko numeris: {order.Table.Id}");
             Console.WriteLine($"Kaina: {order.TotalPrice}");
             Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Patiekalai:");
             if (order.Dishes != null && order.Dishes.Count > 0)
             {
@@ -303,6 +340,7 @@ namespace RestoranoSistema.UI
                 }
             }
             Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Gėrimai:");
             if (order.Beverages != null && order.Beverages.Count > 0)
             {
@@ -311,6 +349,7 @@ namespace RestoranoSistema.UI
                     Console.WriteLine($"{beverage.Id}. {beverage.Name} - {beverage.Price}eur");
                 }
             }
+            Console.ResetColor();
         }
         public void AddFoodOrDrinkToOrder(Guid orderId, MenuItem menuItem)
         {
@@ -359,11 +398,13 @@ namespace RestoranoSistema.UI
         }
         static void PrintHeader()
         {
-            Console.WriteLine("=======================================================================");
-            Console.BackgroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("|                            RESTORANAS                               |");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("========================================");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("|             RESTORANAS                |");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("========================================");
             Console.ResetColor();
-            Console.WriteLine("=======================================================================");
             Console.WriteLine();
         }
     }

@@ -9,10 +9,10 @@ using RestoranoSistema.Repositories;
 
 namespace RestoranoSistema.Services
 {
-    public class TableService : ITableService
+    public class TablesService : ITablesService
     {
         private readonly ITableRepository _tableRepository;
-        public TableService(ITableRepository tableRepository)
+        public TablesService(ITableRepository tableRepository)
         {
             _tableRepository = tableRepository;
         }

@@ -10,10 +10,10 @@ using RestoranoSistema.Services.Interfaces;
 
 namespace RestoranoSistema.Services
 {
-    public class OrderService : IOrderService
+    public class OrdersService : IOrdersService
     {
         private readonly IOrdersRepository _orderRepository;
-        public OrderService(IOrdersRepository ordersRepository)
+        public OrdersService(IOrdersRepository ordersRepository)
         {
             _orderRepository = ordersRepository;
         }

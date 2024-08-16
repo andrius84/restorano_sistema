@@ -1,34 +1,14 @@
 [
   {
-    "Id": "8d27c981-4be7-4a3f-a6f5-161994933980",
+    "Id": "308bcd1e-252a-43d1-be37-74cd78697683",
     "Table": {
-      "Id": 1,
+      "Id": 2,
       "Seats": 6,
       "IsOccupied": true
     },
-    "Beverages": [
-      {
-        "Id": 69,
-        "Category": " Beverages",
-        "Name": " Champagne",
-        "Price": 9.99
-      }
-    ],
-    "Dishes": [
-      {
-        "Id": 1,
-        "Category": " Appetizers",
-        "Name": " Bruschetta",
-        "Price": 5.99
-      },
-      {
-        "Id": 2,
-        "Category": " Appetizers",
-        "Name": " Chicken Wings",
-        "Price": 8.99
-      }
-    ],
-    "OrderTime": "2024-08-14T21:54:41.3512941+03:00",
-    "TotalPrice": 24.97
+    "Beverages": null,
+    "Dishes": null,
+    "OrderTime": "2024-08-16T22:29:11.956802+03:00",
+    "TotalPrice": 0
   }
 ]
