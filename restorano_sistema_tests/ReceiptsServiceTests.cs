@@ -49,7 +49,8 @@ namespace RestoranoSistema.Tests
             var result = _receiptService.GenerateClientReceipt(order);
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(16)); // Expected number of lines
+            Assert.That(result.Count, Is.EqualTo(16));
+            Assert.That(result[3], Is.EqualTo($"Uþsakymo Nr.: {orderId}"));
         }
 
         [Test]
@@ -70,7 +71,7 @@ namespace RestoranoSistema.Tests
             var result = _receiptService.GenerateClientReceipt(order);
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(12)); // Only basic structure without dishes or beverages
+            Assert.That(result.Count, Is.EqualTo(12)); 
             Assert.That(result[3], Is.EqualTo($"Uþsakymo Nr.: {orderId}"));
         }
     }

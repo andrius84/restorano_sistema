@@ -187,10 +187,10 @@ namespace RestoranoSistema.UI
             _tableService.MarkTableAsFree(tableToPay);
             Console.WriteLine("Užsakymas apmokėtas");
             Console.WriteLine("Ar norite išspausdinti kliento čekį? (taip/ne)");
+            var receipt = _receiptService.GenerateClientReceipt(orderToPay);
             var answer = Console.ReadLine();
             if (answer == "taip")
             {
-                var receipt = _receiptService.GenerateClientReceipt(orderToPay);
                 foreach (var line in receipt)
                 {
                     Console.WriteLine(line);
@@ -199,6 +199,18 @@ namespace RestoranoSistema.UI
             if (answer == "ne")
             {
                 Console.WriteLine("Čekis nebuvo išspausdintas");
+            }
+            Console.WriteLine("Ar norite išsiųsti kliento čekį el. paštu? (taip/ne)");
+            var email = Console.ReadLine();
+            if (email == "taip")
+            {
+                Console.WriteLine("Įveskite kliento el. pašto adresą:");
+                var emailaddress = Console.ReadLine();
+                _receiptService.SendClientReceiptToEmail(receipt, emailaddress);
+            }
+            if (email == "ne")
+            {
+                Console.WriteLine("Čekis nebuvo išsiųstas");
             }
             _orderService.DeleteOrder(orderToPay.Id);
             Console.ReadKey();

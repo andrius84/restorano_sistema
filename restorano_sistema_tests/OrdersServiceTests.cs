@@ -49,6 +49,7 @@ namespace RestoranoSistema.Tests
         {
             // Arrange
             var table = new Table();
+            table.Id = 1;
 
             // Act
             _ordersService.CreateOrder(table);

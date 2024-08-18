@@ -8,6 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Repositories.Interfaces;
 using RestoranoSistema.Services.Interfaces;
+using MimeKit;
+using MailKit.Net.Smtp;
+using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+using MailKit.Security;
+
 
 namespace RestoranoSistema.Services
 {
@@ -21,16 +26,16 @@ namespace RestoranoSistema.Services
         public List<string> GenerateClientReceipt(Order order)
         {
             var lines = new List<string>
-                {
-                    "---------------------------------------------------",
-                    "                       Kvitas                         ",
-                    "---------------------------------------------------",
-                    $"Užsakymo Nr.: {order.Id}",
-                    $"Staliukas: {order.Table.Id} (Seats: {order.Table.Seats})",
-                    $"Užsakymo laikas: {order.OrderTime.ToShortTimeString()}",
-                    "---------------------------------------------------",
-                    "Patiekalai ir gėrimai:"
-                };
+            {
+                "---------------------------------------------------",
+                "                       Kvitas                         ",
+                "---------------------------------------------------",
+                $"Užsakymo Nr.: {order.Id}",
+                $"Staliukas: {order.Table.Id} (Seats: {order.Table.Seats})",
+                $"Užsakymo laikas: {order.OrderTime.ToShortTimeString()}",
+                "---------------------------------------------------",
+                "Patiekalai ir gėrimai:"
+            };
             if (order.Dishes != null)
             {
                 foreach (var dish in order.Dishes)
@@ -53,26 +58,26 @@ namespace RestoranoSistema.Services
             }
             lines.AddRange(new[]
             {
-                    "---------------------------------------------------",
-                    $"Visa kaina:                              ${order.TotalPrice:F2}",
-                    "---------------------------------------------------",
-                    "Ačiū, kad renkatės mūsų restoraną!"
-                });
+                "---------------------------------------------------",
+                $"Visa kaina:                                ${order.TotalPrice:F2}",
+                "---------------------------------------------------",
+                "Ačiū, kad renkatės mūsų restoraną!"
+            });
             return lines;
         }
         public List<string> GenerateRestaurantReceipt(Order order)
         {
             var lines = new List<string>
-                {
-                    "---------------------------------------------------",
-                    "                   Restorano kvitas                   ",
-                    "---------------------------------------------------",
-                    $"Užsakymo numeris: {order.Id}",
-                    $"Staliukas: {order.Table.Id} (Seats: {order.Table.Seats})",
-                    $"Užsakymo laikas: {order.OrderTime.ToShortTimeString()}",
-                    "---------------------------------------------------",
-                    "Patiekalai ir gėrimai:"
-                };
+            {
+                "---------------------------------------------------",
+                "                   Restorano kvitas                   ",
+                "---------------------------------------------------",
+                $"Užsakymo numeris: {order.Id}",
+                $"Staliukas: {order.Table.Id} (Seats: {order.Table.Seats})",
+                $"Užsakymo laikas: {order.OrderTime.ToShortTimeString()}",
+                "---------------------------------------------------",
+                "Patiekalai ir gėrimai:"
+            };
             if (order.Dishes != null)
             {
                 foreach (var dish in order.Dishes)
@@ -95,34 +100,58 @@ namespace RestoranoSistema.Services
             }
             lines.AddRange(new[]
             {
-                    "---------------------------------------------------",
-                    $"Galutinė kaina:                          ${order.TotalPrice:F2}",
-                    "---------------------------------------------------"
-                });
+                "---------------------------------------------------",
+                $"Galutinė kaina:                            ${order.TotalPrice:F2}",
+                "---------------------------------------------------"
+            });
             _receiptRepository.SaveRestaurantReceiptToFile(lines);
             return lines;
         }
-        public void SendClientReceiptToEmail(Order order, string clientEmail)
+        public void SendClientReceiptToEmail(List<string> receipt, string? clientEmail)
         {
-            // Generate the receipt
-            var receiptLines = GenerateClientReceipt(order);
-            var receiptBody = string.Join(Environment.NewLine, receiptLines);
-
-            // Set up the email message
-            var mailMessage = new MailMessage("andrius.asmanavicius@gmail.com", clientEmail)
+            try
             {
-                Subject = "Your Receipt from Our Restaurant",
-                Body = receiptBody
-            };
+                // Basic validation for clientEmail
+                if (string.IsNullOrWhiteSpace(clientEmail))
+                {
+                    throw new ArgumentException("Client email address cannot be empty.");
+                }
 
-            // Set up the SMTP client
-            using (var smtpClient = new SmtpClient("smtp.example.com", 587))
+                using (var email = new MimeMessage())
+                {
+                    email.From.Add(new MailboxAddress("Sender Name", "test@email.com"));
+                    email.To.Add(new MailboxAddress("Client", clientEmail));
+                    email.Subject = "Receipt for Your Order";
+                    email.Body = new TextPart("plain")
+                    {
+                        Text = string.Join(Environment.NewLine, receipt)
+                    };
+
+                    using (var smtp = new SmtpClient())
+                    {
+                        smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                        smtp.Authenticate("your-username@gmail.com", "your-app-password"); 
+                        smtp.Send(email);
+                        smtp.Disconnect(true);
+                    }
+                }
+            }
+            catch (SmtpCommandException ex)
             {
-                smtpClient.Credentials = new NetworkCredential("your-email@example.com", "your-email-password");
-                smtpClient.EnableSsl = true;
-
-                // Send the email
-                smtpClient.Send(mailMessage);
+                Console.WriteLine($"SMTP Command error: {ex.Message}");
+                Console.WriteLine($"StatusCode: {ex.StatusCode}");
+            }
+            catch (AuthenticationException ex)
+            {
+                Console.WriteLine($"Authentication failed: {ex.Message}");
+            }
+            catch (SmtpProtocolException ex)
+            {
+                Console.WriteLine($"Protocol error while communicating with SMTP server: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending email: {ex.Message}");
             }
         }
     }
