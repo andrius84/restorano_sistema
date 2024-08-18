@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
 
-namespace RestoranoSistema.Repositories
+namespace RestoranoSistema.Repositories.Interfaces
 {
     public interface IOrdersRepository
     {

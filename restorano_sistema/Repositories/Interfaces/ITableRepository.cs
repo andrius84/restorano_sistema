@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
 
-namespace RestoranoSistema.Repositories
+namespace RestoranoSistema.Repositories.Interfaces
 {
-    public interface IItemsRepository
+    public interface ITableRepository
     {
-        List<Dish> GetFoodList();
-        List<Beverage> GetBeverageList();
+        List<Table> LoadTables();
+        void SaveTables(Table table);
+
     }
 }

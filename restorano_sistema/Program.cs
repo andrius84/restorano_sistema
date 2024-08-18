@@ -1,6 +1,4 @@
-﻿using RestoranoSistema;
-
-namespace Projektas_restorano_sistema
+﻿namespace RestoranoSistema
 {
     internal class Program
     {

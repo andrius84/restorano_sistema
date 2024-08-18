@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
+using RestoranoSistema.Repositories.Interfaces;
 
 namespace RestoranoSistema.Repositories
 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
 
-namespace RestoranoSistema.Services
+namespace RestoranoSistema.Services.Interfaces
 {
     public interface IReceiptsService
     {

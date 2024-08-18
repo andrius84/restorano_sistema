@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestoranoSistema", "Projektas_restorano_sistema\RestoranoSistema.csproj", "{2BA132CF-EC02-4666-853D-97DB7D3F6955}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestoranoSistema", "restorano_sistema\RestoranoSistema.csproj", "{2BA132CF-EC02-4666-853D-97DB7D3F6955}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{309BEAB1-0601-46F7-895E-AE1D5014C983}"
 EndProject
@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CFC955C0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RestoranoSistema", "RestoranoSistema", "{2EA21063-1DB5-4D5A-B7AA-69C60E0AFD95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestoranoSistema.Tests", "RestoranoSistema.Tests\RestoranoSistema.Tests.csproj", "{36E0A44C-0E8A-434C-A752-A478B67D5123}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestoranoSistema.Tests", "restorano_sistema_tests\RestoranoSistema.Tests.csproj", "{00C9DDBD-2A82-40F4-9974-202E32340ED0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{2BA132CF-EC02-4666-853D-97DB7D3F6955}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BA132CF-EC02-4666-853D-97DB7D3F6955}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BA132CF-EC02-4666-853D-97DB7D3F6955}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36E0A44C-0E8A-434C-A752-A478B67D5123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36E0A44C-0E8A-434C-A752-A478B67D5123}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36E0A44C-0E8A-434C-A752-A478B67D5123}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36E0A44C-0E8A-434C-A752-A478B67D5123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00C9DDBD-2A82-40F4-9974-202E32340ED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00C9DDBD-2A82-40F4-9974-202E32340ED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00C9DDBD-2A82-40F4-9974-202E32340ED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00C9DDBD-2A82-40F4-9974-202E32340ED0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,7 +34,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2BA132CF-EC02-4666-853D-97DB7D3F6955} = {2EA21063-1DB5-4D5A-B7AA-69C60E0AFD95}
 		{2EA21063-1DB5-4D5A-B7AA-69C60E0AFD95} = {309BEAB1-0601-46F7-895E-AE1D5014C983}
-		{36E0A44C-0E8A-434C-A752-A478B67D5123} = {CFC955C0-38AE-4F36-AFBD-61E166E2A118}
+		{00C9DDBD-2A82-40F4-9974-202E32340ED0} = {CFC955C0-38AE-4F36-AFBD-61E166E2A118}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8C3142F7-212F-4114-8D7B-49E311D34A94}

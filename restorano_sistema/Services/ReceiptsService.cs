@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Repositories.Interfaces;
+using RestoranoSistema.Services.Interfaces;
 
 namespace RestoranoSistema.Services
 {

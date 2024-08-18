@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Models;
-using RestoranoSistema.Repositories;
+using RestoranoSistema.Repositories.Interfaces;
 using RestoranoSistema.Services.Interfaces;
 
 namespace RestoranoSistema.Services
@@ -24,24 +24,6 @@ namespace RestoranoSistema.Services
             order.OrderTime = DateTime.Now;
             order.Table = table;
             _orderRepository.AddOrderToJsonFile(order);
-        }
-        public decimal CalculateOrderTotalPrice(Guid orderId)
-        {
-            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
-            if (order == null)
-            {
-                throw new Exception("Order not found");
-            }
-            decimal totalPrice = 0;
-            if (order.Dishes != null)
-            {
-                totalPrice += order.Dishes.Sum(x => x.Price);
-            }
-            if (order.Beverages != null)
-            {
-                totalPrice += order.Beverages.Sum(x => x.Price);
-            }
-            return totalPrice;
         }
         public void UpdateOrder(Order order)
         {

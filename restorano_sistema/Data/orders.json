@@ -10,5 +10,17 @@
     "Dishes": null,
     "OrderTime": "2024-08-16T22:29:11.956802+03:00",
     "TotalPrice": 0
+  },
+  {
+    "Id": "00a29420-b8f5-4be4-96fb-540dc90f4d1c",
+    "Table": {
+      "Id": 4,
+      "Seats": 8,
+      "IsOccupied": true
+    },
+    "Beverages": null,
+    "Dishes": null,
+    "OrderTime": "2024-08-18T11:09:07.7991408+03:00",
+    "TotalPrice": 0
   }
 ]

@@ -10,7 +10,6 @@ namespace RestoranoSistema.Services.Interfaces
     public interface IOrdersService
     {
         void CreateOrder(Table table);
-        decimal CalculateOrderTotalPrice(Guid orderId);
         void UpdateOrder(Order order);
         void DeleteOrder(Guid orderId);
         void AddDishToOrder(Guid orderId, Dish dish);

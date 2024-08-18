@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RestoranoSistema.Repositories;
 using RestoranoSistema.Services.Interfaces;
+using RestoranoSistema.Repositories.Interfaces;
 
 namespace RestoranoSistema.Services
 {

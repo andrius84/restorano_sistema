@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using RestoranoSistema.Repositories;
 using System.ComponentModel;
-using RestoranoSistema.Services;
 using System.Runtime.InteropServices;
 using RestoranoSistema.Services.Interfaces;
 using RestoranoSistema.UI.Interfaces;
