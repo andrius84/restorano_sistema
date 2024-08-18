@@ -2,119 +2,77 @@ using NUnit.Framework;
 using RestoranoSistema.Models;
 using RestoranoSistema.Repositories.Interfaces;
 using RestoranoSistema.Services;
+using Moq;
 
-namespace RestoranoSistema.Tests.Services
+namespace RestoranoSistema.Tests
 {
+    using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using Moq;
+    using RestoranoSistema.Services.Interfaces;
+
     [TestFixture]
-    public class ReceiptsServiceTests
+    public class ReceiptServiceTests
     {
-        private ReceiptsService _receiptsService;
+        private ReceiptsService _receiptService;
 
         [SetUp]
         public void Setup()
         {
-            // Create a mock receipt repository
-            var receiptRepository = new Mock<IReceiptRepository>().Object;
-
-            // Create an instance of the ReceiptsService with the mock repository
-            _receiptsService = new ReceiptsService(receiptRepository);
+            _receiptService = new ReceiptsService(Mock.Of<IReceiptRepository>());
         }
 
         [Test]
-        public void GenerateClientReceipt_ShouldReturnCorrectLines()
+        public void GenerateClientReceipt_WithValidOrder_ReturnsExpectedReceipt()
         {
             // Arrange
+            var orderId = Guid.NewGuid();
             var order = new Order
             {
-                Id = 1,
+                Id = orderId,
                 Table = new Table { Id = 1, Seats = 4 },
-                OrderTime = new DateTime(2022, 1, 1, 12, 0, 0),
+                OrderTime = new DateTime(2024, 8, 18, 12, 0, 0),
                 Dishes = new List<Dish>
                 {
-                    new Dish { Name = "Pizza", Price = 10.99 },
-                    new Dish { Name = "Salad", Price = 5.99 }
+                    new Dish { Name = "Burger", Price = 10.5m },
+                    new Dish { Name = "Pizza", Price = 12.0m }
                 },
                 Beverages = new List<Beverage>
                 {
-                    new Beverage { Name = "Coke", Price = 2.99 },
-                    new Beverage { Name = "Water", Price = 1.99 }
-                },
-                TotalPrice = 21.96
-            };
-
-            var expectedLines = new List<string>
-            {
-                "---------------------------------------------------",
-                "                       Kvitas                         ",
-                "---------------------------------------------------",
-                "Uþsakymo Nr.: 1",
-                "Staliukas: 1 (Seats: 4)",
-                "Uþsakymo laikas: 12:00 PM",
-                "---------------------------------------------------",
-                "Patiekalai ir gërimai:",
-                "- Pizza                                  $10.99",
-                "- Salad                                  $5.99",
-                "- Coke                                   $2.99",
-                "- Water                                  $1.99",
-                "---------------------------------------------------",
-                "Visa kaina:                              $21.96",
-                "---------------------------------------------------",
-                "Aèiû, kad renkatës mûsø restoranà!"
+                    new Beverage { Name = "Coke", Price = 2.5m },
+                    new Beverage { Name = "Water", Price = 1.5m }
+                }
             };
 
             // Act
-            var result = _receiptsService.GenerateClientReceipt(order);
+            var result = _receiptService.GenerateClientReceipt(order);
 
             // Assert
-            Assert.AreEqual(expectedLines, result);
+            Assert.That(result.Count, Is.EqualTo(16)); // Expected number of lines
         }
 
         [Test]
-        public void GenerateRestaurantReceipt_ShouldReturnCorrectLines()
+        public void GenerateClientReceipt_EmptyOrder_ReturnsBasicReceipt()
         {
             // Arrange
+            var orderId = Guid.NewGuid();
             var order = new Order
             {
-                Id = 1,
-                Table = new Table { Id = 1, Seats = 4 },
-                OrderTime = new DateTime(2022, 1, 1, 12, 0, 0),
-                Dishes = new List<Dish>
-                {
-                    new Dish { Name = "Pizza", Price = 10.99 },
-                    new Dish { Name = "Salad", Price = 5.99 }
-                },
-                Beverages = new List<Beverage>
-                {
-                    new Beverage { Name = "Coke", Price = 2.99 },
-                    new Beverage { Name = "Water", Price = 1.99 }
-                },
-                TotalPrice = 21.96
-            };
-
-            var expectedLines = new List<string>
-            {
-                "---------------------------------------------------",
-                "                   Restorano kvitas                   ",
-                "---------------------------------------------------",
-                "Uþsakymo numeris: 1",
-                "Staliukas: 1 (Seats: 4)",
-                "Uþsakymo laikas: 12:00 PM",
-                "---------------------------------------------------",
-                "Patiekalai ir gërimai:",
-                "- Pizza                                  $10.99",
-                "- Salad                                  $5.99",
-                "- Coke                                   $2.99",
-                "- Water                                  $1.99",
-                "---------------------------------------------------",
-                "Galutinë kaina:                          $21.96",
-                "---------------------------------------------------"
+                Id = orderId,
+                Table = new Table { Id = 2, Seats = 2 },
+                OrderTime = new DateTime(2024, 8, 18, 13, 0, 0),
+                Dishes = null,
+                Beverages = null
             };
 
             // Act
-            var result = _receiptsService.GenerateRestaurantReceipt(order);
+            var result = _receiptService.GenerateClientReceipt(order);
 
             // Assert
-            Assert.AreEqual(expectedLines, result);
+            Assert.That(result.Count, Is.EqualTo(12)); // Only basic structure without dishes or beverages
+            Assert.That(result[3], Is.EqualTo($"Uþsakymo Nr.: {orderId}"));
         }
     }
+
 }

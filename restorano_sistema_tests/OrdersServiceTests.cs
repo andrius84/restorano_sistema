@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using RestoranoSistema.Models;
 using RestoranoSistema.Services;
 using RestoranoSistema.Repositories.Interfaces;
+using RestoranoSistema.Services.Interfaces;
 
 namespace RestoranoSistema.Tests
 {
@@ -13,12 +14,34 @@ namespace RestoranoSistema.Tests
     {
         private OrdersService _ordersService;
         private Mock<IOrdersRepository> _mockOrderRepository;
+        private List<Order> _orders;
+
 
         [SetUp]
         public void Setup()
         {
             _mockOrderRepository = new Mock<IOrdersRepository>();
             _ordersService = new OrdersService(_mockOrderRepository.Object);
+
+            _orders = new List<Order>
+        {
+            new Order
+            {
+                Id = Guid.NewGuid(),
+                Dishes = new List<Dish>
+                {
+                    new Dish { Id = 1, Name = "Pizza", Price = 12.0m },
+                    new Dish { Id = 2, Name = "Burger", Price = 10.5m }
+                },
+                Beverages = new List<Beverage>
+                {
+                    new Beverage { Id = 1, Name = "Coke", Price = 2.5m }
+                }
+            }
+        };
+
+            // Mock ReadOrdersFromJsonFile to return the orders list
+            _mockOrderRepository.Setup(repo => repo.ReadOrdersFromJsonFile()).Returns(_orders);
         }
 
         [Test]
@@ -99,44 +122,6 @@ namespace RestoranoSistema.Tests
         }
 
         [Test]
-        public void DeleteDishFromOrder_ShouldRemoveDishFromOrderAndUpdateJsonFile()
-        {
-            // Arrange
-            var orderId = Guid.NewGuid();
-            var order = new Order { Id = orderId };
-            var dish = new Dish { Id = 1, Category = "Appetizers", Name = "Bruschetta", Price = 5.99m };
-            order.Dishes?.Add(dish);
-
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
-
-            // Act
-            _ordersService.DeleteDishFromOrder(orderId, dish);
-
-            // Assert
-            _mockOrderRepository.Verify(x => x.UpdateOrderToJsonFile(order), Times.Once);
-            Assert.IsFalse(order.Dishes?.Contains(dish));
-        }
-
-        [Test]
-        public void DeleteBeverageFromOrder_ShouldRemoveBeverageFromOrderAndUpdateJsonFile()
-        {
-            // Arrange
-            var orderId = Guid.NewGuid();
-            var order = new Order { Id = orderId };
-            var beverage = new Beverage { Id = 1, Category = "Beverages", Name = "Coffee", Price = 2.99m };
-            order.Beverages?.Add(beverage);
-
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
-
-            // Act
-            _ordersService.DeleteBeverageFromOrder(orderId, beverage);
-
-            // Assert
-            _mockOrderRepository.Verify(x => x.UpdateOrderToJsonFile(order), Times.Once);
-            Assert.IsFalse(order.Beverages?.Contains(beverage));
-        }
-
-        [Test]
         public void GetOrders_ShouldReturnListOfOrders()
         {
             // Arrange
@@ -194,5 +179,92 @@ namespace RestoranoSistema.Tests
             // Assert
             _mockOrderRepository.Verify(x => x.UpdateOrderToJsonFile(order), Times.Once);
         }
+
+        [Test]
+        public void DeleteDishFromOrder_ValidDish_DeletesDishAndUpdatesOrder()
+        {
+            // Arrange
+            var orderId = _orders[0].Id;
+            var dishToDelete = _orders[0].Dishes[0]; // Dish with Id = 1
+
+            // Act
+            _ordersService.DeleteDishFromOrder(orderId, dishToDelete);
+
+            // Assert
+            Assert.IsFalse(_orders[0].Dishes.Any(d => d.Id == dishToDelete.Id), "The dish should be deleted from the order.");
+            _mockOrderRepository.Verify(repo => repo.UpdateOrderToJsonFile(_orders[0]), Times.Once, "UpdateOrderToJsonFile should be called once.");
+        }
+
+        [Test]
+        public void DeleteDishFromOrder_DishNotInOrder_NoChangesMade()
+        {
+            // Arrange
+            var orderId = _orders[0].Id;
+            var dishNotInOrder = new Dish { Id = 3, Name = "Salad", Price = 5.0m }; // Dish with Id = 3 is not in the order
+
+            // Act
+            _ordersService.DeleteDishFromOrder(orderId, dishNotInOrder);
+
+            // Assert
+            Assert.AreEqual(2, _orders[0].Dishes.Count, "The number of dishes should remain the same.");
+            _mockOrderRepository.Verify(repo => repo.UpdateOrderToJsonFile(_orders[0]), Times.Once, "UpdateOrderToJsonFile should still be called.");
+        }
+
+        [Test]
+        public void DeleteDishFromOrder_OrderNotFound_ThrowsException()
+        {
+            // Arrange
+            var invalidOrderId = Guid.NewGuid();
+            var dish = new Dish { Id = 1, Name = "Pizza", Price = 12.0m };
+
+            // Act & Assert
+            var ex = Assert.Throws<Exception>(() => _ordersService.DeleteDishFromOrder(invalidOrderId, dish));
+            Assert.AreEqual("Order not found", ex.Message);
+            _mockOrderRepository.Verify(repo => repo.UpdateOrderToJsonFile(It.IsAny<Order>()), Times.Never, "UpdateOrderToJsonFile should not be called if order is not found.");
+        }
+
+        [Test]
+        public void DeleteBeverageFromOrder_ValidBeverage_DeletesBeverageAndUpdatesOrder()
+        {
+            // Arrange
+            var orderId = _orders[0].Id;
+            var beverageToDelete = _orders[0].Beverages[0]; // Beverage with Id = 1
+
+            // Act
+            _ordersService.DeleteBeverageFromOrder(orderId, beverageToDelete);
+
+            // Assert
+            Assert.IsFalse(_orders[0].Beverages.Any(b => b.Id == beverageToDelete.Id), "The beverage should be deleted from the order.");
+            _mockOrderRepository.Verify(repo => repo.UpdateOrderToJsonFile(_orders[0]), Times.Once, "UpdateOrderToJsonFile should be called once.");
+        }
+
+        [Test]
+        public void DeleteBeverageFromOrder_BeverageNotInOrder_NoChangesMade()
+        {
+            // Arrange
+            var orderId = _orders[0].Id;
+            var beverageNotInOrder = new Beverage { Id = 2, Name = "Juice", Price = 3.0m }; // Beverage with Id = 2 is not in the order
+
+            // Act
+            _ordersService.DeleteBeverageFromOrder(orderId, beverageNotInOrder);
+
+            // Assert
+            Assert.AreEqual(1, _orders[0].Beverages.Count, "The number of beverages should remain the same.");
+            _mockOrderRepository.Verify(repo => repo.UpdateOrderToJsonFile(_orders[0]), Times.Once, "UpdateOrderToJsonFile should still be called.");
+        }
+
+        [Test]
+        public void DeleteBeverageFromOrder_OrderNotFound_ThrowsException()
+        {
+            // Arrange
+            var invalidOrderId = Guid.NewGuid();
+            var beverage = new Beverage { Id = 1, Name = "Coke", Price = 2.5m };
+
+            // Act & Assert
+            var ex = Assert.Throws<Exception>(() => _ordersService.DeleteBeverageFromOrder(invalidOrderId, beverage));
+            Assert.AreEqual("Order not found", ex.Message);
+            _mockOrderRepository.Verify(repo => repo.UpdateOrderToJsonFile(It.IsAny<Order>()), Times.Never, "UpdateOrderToJsonFile should not be called if order is not found.");
+        }
     }
 }
+

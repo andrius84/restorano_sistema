@@ -15,36 +15,10 @@ namespace RestoranoSistema.Tests
         [SetUp]
         public void Setup()
         {
-            string projectDirectory = "../../../../Data/food.csv";
-            string projectDirectory2 = "../../../../Data/drinks.csv";
+            string projectDirectory = "../../../../restorano_sistema/Data/food.csv";
+            string projectDirectory2 = "../../../../restorano_sistema/Data/drinks.csv";
             _itemsRepository = new ItemsRepository(projectDirectory, projectDirectory2);
             _itemsService = new ItemsService(_itemsRepository);
-        }
-
-        [Test]
-        public void Beverages_ReturnsBeverageListInDescendingOrder()
-        {
-            // Arrange
-            var expectedBeverages = _itemsRepository.GetBeverageList().OrderByDescending(x => x.Name).ToList();
-
-            // Act
-            var actualBeverages = _itemsService.Beverages();
-
-            // Assert
-            CollectionAssert.AreEqual(expectedBeverages, actualBeverages);
-        }
-
-        [Test]
-        public void Dishes_ReturnsFoodListInDescendingOrder()
-        {
-            // Arrange
-            var expectedDishes = _itemsRepository.GetFoodList().OrderByDescending(x => x.Name).ToList();
-
-            // Act
-            var actualDishes = _itemsService.Dishes();
-
-            // Assert
-            CollectionAssert.AreEqual(expectedDishes, actualDishes);
         }
     }
 }

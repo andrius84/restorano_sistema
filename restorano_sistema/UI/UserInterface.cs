@@ -80,7 +80,7 @@ namespace RestoranoSistema.UI
             var order = _orderService.GetOrderByTableId(table.Id);
             return order;
         }
-        private Guid CreateOrder()
+        public Guid CreateOrder()
         {
             Console.Clear();
             PrintHeader();
@@ -97,7 +97,7 @@ namespace RestoranoSistema.UI
             Console.ReadKey();
             return order.Id;
         }
-        private void UpdateOrder(Guid orderId)
+        public void UpdateOrder(Guid orderId)
         {
             Console.Clear();
             PrintHeader();
