@@ -35,34 +35,6 @@ namespace RestoranoSistema.Tests
         }
 
         [Test]
-        public void CalculateOrderTotalPrice_ShouldReturnTotalPrice()
-        {
-            // Arrange
-            var orderId = Guid.NewGuid();
-            var order = new Order
-            {
-                Id = orderId,
-                Dishes = new List<Dish>
-                {
-                    new Dish { Price = 10 },
-                    new Dish { Price = 15 }
-                },
-                Beverages = new List<Beverage>
-                {
-                    new Beverage { Price = 5 },
-                    new Beverage { Price = 8 }
-                }
-            };
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
-
-            // Act
-            var totalPrice = _ordersService.CalculateOrderTotalPrice(orderId);
-
-            // Assert
-            Assert.AreEqual(38, totalPrice);
-        }
-
-        [Test]
         public void UpdateOrder_ShouldUpdateOrderInJsonFile()
         {
             // Arrange

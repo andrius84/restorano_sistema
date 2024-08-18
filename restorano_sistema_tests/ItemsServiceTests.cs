@@ -15,7 +15,9 @@ namespace RestoranoSistema.Tests
         [SetUp]
         public void Setup()
         {
-            _itemsRepository = new ItemsRepository(projectDirectory,projectDirectory2);
+            string projectDirectory = "../../../../Data/food.csv";
+            string projectDirectory2 = "../../../../Data/drinks.csv";
+            _itemsRepository = new ItemsRepository(projectDirectory, projectDirectory2);
             _itemsService = new ItemsService(_itemsRepository);
         }
 
