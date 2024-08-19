@@ -18,22 +18,23 @@ namespace RestoranoSistema
     {
         public void Start()
         {
+
+            IItemsRepository itemsRepository = new ItemsRepository("../../../Data/food.csv", "../../../Data/drinks.csv");
+            IItemsService itemsService = new ItemsService(itemsRepository);
+
+            ITableRepository tableRepository = new TablesRepository("../../../Data/tables.csv");
+            ITablesService tableService = new TablesService(tableRepository);
+
+            IOrdersRepository ordersRepository = new OrdersRepository("../../../Data/orders.json");
+            IOrdersService orderService = new OrdersService(ordersRepository);
+
+            IReceiptRepository receiptRepository = new ReceiptsRepository("../../../Data/receipts.csv");
+            IReceiptsService receiptService = new ReceiptsService(receiptRepository);
+
+            IUserInterface userinterface = new UserInterface(tableService, orderService, receiptService, itemsService);
+
             while (true)
             {
-                IItemsRepository itemsRepository = new ItemsRepository("../../../Data/food.csv", "../../../Data/drinks.csv");
-                IItemsService itemsService = new ItemsService(itemsRepository);
-
-                ITableRepository tableRepository = new TablesRepository("../../../Data/tables.csv");
-                ITablesService tableService = new TablesService(tableRepository);
-
-                IOrdersRepository ordersRepository = new OrdersRepository("../../../Data/orders.json");
-                IOrdersService orderService = new OrdersService(ordersRepository);
-
-                IReceiptRepository receiptRepository = new ReceiptsRepository("../../../Data/receipts.csv");
-                IReceiptsService receiptService = new ReceiptsService(receiptRepository);
-
-                IUserInterface userinterface = new UserInterface(tableService, orderService, receiptService, itemsService);
-
                 userinterface.ShowMainMenu();
             }
         }

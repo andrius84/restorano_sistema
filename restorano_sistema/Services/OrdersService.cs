@@ -92,14 +92,5 @@ namespace RestoranoSistema.Services
         {
             return _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
         }
-        public void AddTotalPriceToOrder(Guid orderId)
-        {
-            var order = _orderRepository.ReadOrdersFromJsonFile().FirstOrDefault(x => x.Id == orderId);
-            if (order == null)
-            {
-                throw new Exception("Order not found");
-            }
-            _orderRepository.UpdateOrderToJsonFile(order);
-        }
     }
 }

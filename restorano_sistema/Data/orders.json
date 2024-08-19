@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "Id": "b3fa4c94-6ee4-4538-b810-ffecf9fd4a06",
+    "Table": {
+      "Id": 2,
+      "Seats": 6,
+      "IsOccupied": true
+    },
+    "Beverages": [
+      {
+        "Id": 22,
+        "Category": " Beverages",
+        "Name": " Cola",
+        "Price": 1.99
+      }
+    ],
+    "Dishes": [
+      {
+        "Id": 1,
+        "Category": " Appetizers",
+        "Name": " Bruschetta",
+        "Price": 5.99
+      }
+    ],
+    "OrderTime": "2024-08-19T21:39:25.6736373+03:00",
+    "TotalPrice": 7.98
+  }
+]
