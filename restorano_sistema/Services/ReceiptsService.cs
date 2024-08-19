@@ -59,7 +59,7 @@ namespace RestoranoSistema.Services
             lines.AddRange(new[]
             {
                 "---------------------------------------------------",
-                $"Visa kaina:                                ${order.TotalPrice:F2}",
+                $"Visa kaina:                                   ${order.TotalPrice:F2}",
                 "---------------------------------------------------",
                 "Ačiū, kad renkatės mūsų restoraną!"
             });
@@ -101,7 +101,7 @@ namespace RestoranoSistema.Services
             lines.AddRange(new[]
             {
                 "---------------------------------------------------",
-                $"Galutinė kaina:                            ${order.TotalPrice:F2}",
+                $"Galutinė kaina:                               ${order.TotalPrice:F2}",
                 "---------------------------------------------------"
             });
             _receiptRepository.SaveRestaurantReceiptToFile(lines);

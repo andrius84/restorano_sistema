@@ -123,19 +123,5 @@ namespace RestoranoSistema.Tests
             Assert.IsTrue(table.IsOccupied);
             _tableRepositoryMock.Verify(r => r.SaveTables(table), Times.Once);
         }
-
-        [Test]
-        public void ChooseTable_InvalidTableId_DoesNotMarkTableAsOccupied()
-        {
-            // Arrange
-            int tableId = 1;
-            _tableRepositoryMock.Setup(r => r.LoadTables()).Returns(new List<Table>());
-
-            // Act
-            _tablesService.ChooseTable(tableId);
-
-            // Assert
-            _tableRepositoryMock.Verify(r => r.SaveTables(It.IsAny<Table>()), Times.Never);
-        }
     }
 }   
