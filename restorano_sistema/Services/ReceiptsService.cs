@@ -59,7 +59,7 @@ namespace RestoranoSistema.Services
             lines.AddRange(new[]
             {
                 "---------------------------------------------------",
-                $"Visa kaina:                                   ${order.TotalPrice:F2}",
+                $"Visa kaina:                                  ${order.TotalPrice:F2}",
                 "---------------------------------------------------",
                 "Ačiū, kad renkatės mūsų restoraną!"
             });
@@ -101,7 +101,7 @@ namespace RestoranoSistema.Services
             lines.AddRange(new[]
             {
                 "---------------------------------------------------",
-                $"Galutinė kaina:                               ${order.TotalPrice:F2}",
+                $"Galutinė kaina:                              ${order.TotalPrice:F2}",
                 "---------------------------------------------------"
             });
             _receiptRepository.SaveRestaurantReceiptToFile(lines);
@@ -129,8 +129,8 @@ namespace RestoranoSistema.Services
 
                     using (var smtp = new SmtpClient())
                     {
-                        smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                        smtp.Authenticate("your-username@gmail.com", "your-app-password"); 
+                        smtp.Connect("localhost", 2525, false);
+                        //smtp.Authenticate("user", "pass"); 
                         smtp.Send(email);
                         smtp.Disconnect(true);
                     }

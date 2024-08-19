@@ -207,6 +207,7 @@ namespace RestoranoSistema.UI
                 Console.WriteLine("Įveskite kliento el. pašto adresą:");
                 var emailaddress = Console.ReadLine();
                 _receiptService.SendClientReceiptToEmail(receipt, emailaddress);
+                Console.WriteLine("Čekis išsiųstas į nurodytą el. pašto adresą");
             }
             if (email == "ne")
             {

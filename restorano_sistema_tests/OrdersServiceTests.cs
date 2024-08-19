@@ -62,7 +62,7 @@ namespace RestoranoSistema.Tests
         public void UpdateOrder_ShouldUpdateOrderInJsonFile()
         {
             // Arrange
-            var order = new Order();
+            var order = new Order { Id = Guid.NewGuid() };
 
             // Act
             _ordersService.UpdateOrder(order);
