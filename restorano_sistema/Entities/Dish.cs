@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using RestoranoSistema.Repositories;
 
 
-namespace RestoranoSistema.Models
+namespace RestoranoSistema.Entities
 {
     public class Dish : MenuItem
     {

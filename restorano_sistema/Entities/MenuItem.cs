@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestoranoSistema.Models
+namespace RestoranoSistema.Entities
 {
     public abstract class MenuItem
     {

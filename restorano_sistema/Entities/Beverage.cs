@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Repositories;
 
-namespace RestoranoSistema.Models
+namespace RestoranoSistema.Entities
 {
     public class Beverage : MenuItem
     {

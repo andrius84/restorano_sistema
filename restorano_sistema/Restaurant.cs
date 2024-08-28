@@ -5,7 +5,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using RestoranoSistema.Repositories;
-using RestoranoSistema.Models;
+using RestoranoSistema.Entities;
 using RestoranoSistema.Services;
 using RestoranoSistema.UI;
 using RestoranoSistema.Services.Interfaces;
@@ -18,7 +18,6 @@ namespace RestoranoSistema
     {
         public void Start()
         {
-
             IItemsRepository itemsRepository = new ItemsRepository("../../../Data/food.csv", "../../../Data/drinks.csv");
             IItemsService itemsService = new ItemsService(itemsRepository);
 
@@ -38,6 +37,5 @@ namespace RestoranoSistema
                 userinterface.ShowMainMenu();
             }
         }
-
     }
 }
