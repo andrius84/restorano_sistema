@@ -4,103 +4,80 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using RestoranoSistema.Models;
+using RestoranoSistema.Entities;
 using RestoranoSistema.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestoranoSistema.Repositories
 {
     public class OrdersRepository : IOrdersRepository
     {
-        private readonly Order _order;
-        private readonly string _filePath;
-        public OrdersRepository(string filePath)
+        private readonly RestoranasDbContext _context;
+
+        public OrdersRepository(RestoranasDbContext context)
         {
-            //_order = order;
-            _filePath = filePath;
+            _context = context;
         }
-        public void AddOrderToJsonFile(Order order)
+
+        public void AddOrder(Order order)
         {
             try
             {
-                string jsonString = File.ReadAllText(_filePath);
-                List<Order> orders = new List<Order>();
-                if (!string.IsNullOrEmpty(jsonString))
-                {
-                    orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
-                }
-                orders.Add(order);
-                jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-                File.WriteAllText(_filePath, jsonString);
+                _context.Orders.Add(order);
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Įvyko klaida pridedant užsakymą į JSON failą: {ex.Message}");
+                Console.WriteLine($"Error occurred while adding the order to the database: {ex.Message}");
             }
         }
-        public List<Order> ReadOrdersFromJsonFile()
+
+        public List<Order> GetOrders()
         {
             try
             {
-                string jsonString = File.ReadAllText(_filePath);
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    return new List<Order>();
-                }
-                List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString);
-                return orders;
+                return _context.Orders.ToList();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Įvyko klaida nuskaitant užsakymus iš JSON failo: {ex.Message}");
+                Console.WriteLine($"Error occurred while reading orders from the database: {ex.Message}");
                 return new List<Order>();
             }
         }
-        public void UpdateOrderToJsonFile(Order order)
+
+        public void UpdateOrder(Order order)
         {
             try
             {
-                string jsonString = File.ReadAllText(_filePath);
-                List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString) ?? new List<Order>();
-                Order orderToUpdate = orders.FirstOrDefault(x => x.Id == order.Id);
-                if (orderToUpdate != null)
+                var existingOrder = _context.Orders.FirstOrDefault(o => o.Id == order.Id);
+                if (existingOrder != null)
                 {
-                    orderToUpdate.Dishes = order.Dishes;
-                    orderToUpdate.Beverages = order.Beverages;
-                    jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    });
-                    File.WriteAllText(_filePath, jsonString);
+                    existingOrder.Dishes = order.Dishes;
+                    existingOrder.Beverages = order.Beverages;
+                    _context.Orders.Update(existingOrder);
+                    _context.SaveChanges();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Įvyko klaida atnaujinant užsakymą JSON faile: {ex.Message}");
+                Console.WriteLine($"Error occurred while updating the order in the database: {ex.Message}");
             }
         }
-        public void DeleteOrderFromJsonFile(Order order)
+
+        public void DeleteOrder(Order order)
         {
             try
             {
-                string jsonString = File.ReadAllText(_filePath);
-                List<Order> orders = JsonSerializer.Deserialize<List<Order>>(jsonString) ?? new List<Order>();
-                Order orderToDelete = orders.FirstOrDefault(x => x.Id == order.Id);
+                var orderToDelete = _context.Orders.FirstOrDefault(o => o.Id == order.Id);
                 if (orderToDelete != null)
                 {
-                    orders.Remove(orderToDelete);
-                    jsonString = JsonSerializer.Serialize(orders, new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    });
-                    File.WriteAllText(_filePath, jsonString);
+                    _context.Orders.Remove(orderToDelete);
+                    _context.SaveChanges();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Įvyko klaida ištrinant užsakymą iš JSON failo: {ex.Message}");
+                Console.WriteLine($"Error occurred while deleting the order from the database: {ex.Message}");
             }
         }
     }

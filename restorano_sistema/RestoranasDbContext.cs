@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
 using RestoranoSistema.Entities;
 using RestoranoSistema.Repositories;
@@ -10,30 +11,25 @@ using RestoranoSistema.Services;
 
 namespace RestoranoSistema
 {
-    internal class RestoranasContext : DbContext
+    public class RestoranasDbContext : DbContext
     {
-        public RestoranasContext()
+        public RestoranasDbContext()
         {
         }
-        public RestoranasContext(DbSet<Table> tables, DbSet<Dish> dishes, DbSet<Beverage> beverages, DbSet<Order> orders, DbSet<MenuItem> menuItems)
+        public RestoranasDbContext(DbContextOptions<RestoranasDbContext> options) : base(options)
         {
-            Tables = tables;
-            Dishes = dishes;
-            Beverages = beverages;
-            Orders = orders;
-            MenuItems = menuItems;
         }
-        public DbSet<Table> Tables { get; set; }
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<Beverage> Beverages { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Table> Tables { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=Restoranas;Trusted_Connection=True;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer(@"Server=localhost;Database=Restoranas;Trusted_Connection=True;TrustServerCertificate=True;");
 
             }
         }

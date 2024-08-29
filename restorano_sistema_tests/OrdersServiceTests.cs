@@ -2,7 +2,7 @@ using NUnit.Framework;
 using Moq;
 using System;
 using System.Collections.Generic;
-using RestoranoSistema.Models;
+using RestoranoSistema.Entities;
 using RestoranoSistema.Services;
 using RestoranoSistema.Repositories.Interfaces;
 using RestoranoSistema.Services.Interfaces;
@@ -41,7 +41,7 @@ namespace RestoranoSistema.Tests
         };
 
             // Mock ReadOrdersFromJsonFile to return the orders list
-            _mockOrderRepository.Setup(repo => repo.ReadOrdersFromJsonFile()).Returns(_orders);
+            _mockOrderRepository.Setup(repo => repo.GetOrders()).Returns(_orders);
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace RestoranoSistema.Tests
             _ordersService.CreateOrder(table);
 
             // Assert
-            _mockOrderRepository.Verify(x => x.AddOrderToJsonFile(It.IsAny<Order>()), Times.Once);
+            _mockOrderRepository.Verify(x => x.AddOrder(It.IsAny<Order>()), Times.Once);
         }
 
         [Test]
@@ -68,22 +68,7 @@ namespace RestoranoSistema.Tests
             _ordersService.UpdateOrder(order);
 
             // Assert
-            _mockOrderRepository.Verify(x => x.UpdateOrderToJsonFile(order), Times.Once);
-        }
-
-        [Test]
-        public void DeleteOrder_ShouldDeleteOrderFromJsonFile()
-        {
-            // Arrange
-            var orderId = Guid.NewGuid();
-            var order = new Order { Id = orderId };
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
-
-            // Act
-            _ordersService.DeleteOrder(orderId);
-
-            // Assert
-            _mockOrderRepository.Verify(x => x.DeleteOrderFromJsonFile(order), Times.Once);
+            _mockOrderRepository.Verify(x => x.UpdateOrder(order), Times.Once);
         }
 
         [Test]
@@ -94,13 +79,13 @@ namespace RestoranoSistema.Tests
             var order = new Order { Id = orderId };
             var dish = new Dish();
 
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
+            _mockOrderRepository.Setup(x => x.GetOrders()).Returns(new List<Order> { order });
 
             // Act
             _ordersService.AddDishToOrder(orderId, dish);
 
             // Assert
-            _mockOrderRepository.Verify(x => x.UpdateOrderToJsonFile(order), Times.Once);
+            _mockOrderRepository.Verify(x => x.UpdateOrder(order), Times.Once);
             Assert.Contains(dish, order.Dishes);
         }
 
@@ -112,13 +97,13 @@ namespace RestoranoSistema.Tests
             var order = new Order { Id = orderId };
             var beverage = new Beverage();
 
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
+            _mockOrderRepository.Setup(x => x.GetOrders()).Returns(new List<Order> { order });
 
             // Act
             _ordersService.AddBeverageToOrder(orderId, beverage);
 
             // Assert
-            _mockOrderRepository.Verify(x => x.UpdateOrderToJsonFile(order), Times.Once);
+            _mockOrderRepository.Verify(x => x.UpdateOrder(order), Times.Once);
             Assert.Contains(beverage, order.Beverages);
         }
 
@@ -127,7 +112,7 @@ namespace RestoranoSistema.Tests
         {
             // Arrange
             var orders = new List<Order> { new Order(), new Order() };
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(orders);
+            _mockOrderRepository.Setup(x => x.GetOrders()).Returns(orders);
 
             // Act
             var result = _ordersService.GetOrders();
@@ -142,7 +127,7 @@ namespace RestoranoSistema.Tests
             // Arrange
             var tableId = 1;
             var order = new Order { Table = new Table { Id = tableId } };
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
+            _mockOrderRepository.Setup(x => x.GetOrders()).Returns(new List<Order> { order });
 
             // Act
             var result = _ordersService.GetOrderByTableId(tableId);
@@ -157,7 +142,7 @@ namespace RestoranoSistema.Tests
             // Arrange
             var orderId = Guid.NewGuid();
             var order = new Order { Id = orderId };
-            _mockOrderRepository.Setup(x => x.ReadOrdersFromJsonFile()).Returns(new List<Order> { order });
+            _mockOrderRepository.Setup(x => x.GetOrders()).Returns(new List<Order> { order });
 
             // Act
             var result = _ordersService.GetOrderById(orderId);

@@ -4,51 +4,44 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RestoranoSistema.Models;
+using RestoranoSistema.Entities;
 using RestoranoSistema.Repositories.Interfaces;
 
 namespace RestoranoSistema.Repositories
 {
     public class ItemsRepository : IItemsRepository
     {
-        private readonly string _foodfilePath;
-        private readonly string _drinksfilePath;
-        public ItemsRepository(string foodfilePath, string drinksfilePath)
+        private readonly RestoranasDbContext _context;
+
+        public ItemsRepository(RestoranasDbContext context)
         {
-            _foodfilePath = foodfilePath;
-            _drinksfilePath = drinksfilePath;
+            _context = context;
         }
+
         public List<Dish> GetFoodList()
         {
-            List<Dish> items = new List<Dish>();
-            string[] lines = File.ReadAllLines(_foodfilePath);
-            foreach (string line in lines)
+            try
             {
-                string[] values = line.Split(',');
-                Dish item = new Dish();
-                item.Id = int.TryParse(values[0] ?? "0", out int id) ? id : 0;
-                item.Category = values[1];
-                item.Name = values[2];
-                item.Price = decimal.TryParse(values[3], NumberStyles.Float, CultureInfo.InvariantCulture, out decimal price) ? price : 0;
-                items.Add(item);
+                return _context.Dishes.ToList(); 
             }
-            return items;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred while retrieving food list: {ex.Message}");
+                return new List<Dish>();
+            }
         }
+
         public List<Beverage> GetBeverageList()
         {
-            List<Beverage> items = new List<Beverage>();
-            string[] lines = File.ReadAllLines(_drinksfilePath);
-            foreach (string line in lines)
+            try
             {
-                string[] values = line.Split(',');
-                Beverage item = new Beverage();
-                item.Id = int.TryParse(values[0] ?? "0", out int id) ? id : 0;
-                item.Category = values[1];
-                item.Name = values[2];
-                item.Price = decimal.TryParse(values[3], NumberStyles.Float, CultureInfo.InvariantCulture, out decimal price) ? price : 0;
-                items.Add(item);
+                return _context.Beverages.ToList();
             }
-            return items;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred while retrieving beverage list: {ex.Message}");
+                return new List<Beverage>();
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using RestoranoSistema.Models;
+using RestoranoSistema.Entities;
 using RestoranoSistema.Repositories.Interfaces;
 using RestoranoSistema.Services;
 using Moq;

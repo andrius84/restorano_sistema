@@ -3,60 +3,56 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RestoranoSistema.Models;
+using RestoranoSistema.Entities;
 using RestoranoSistema.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 
 
 namespace RestoranoSistema.Repositories
 {
     public class TablesRepository : ITableRepository
     {
-        private string _filePath;
-        public TablesRepository(string filepath)
+        private readonly RestoranasDbContext _context;
+
+        public TablesRepository(RestoranasDbContext context)
         {
-            _filePath = filepath;
+            _context = context;
         }
+
         public List<Table> LoadTables()
         {
-            List<Table> tables = new List<Table>();
             try
             {
-                var lines = File.ReadAllLines(_filePath);
-                foreach (var line in lines)
-                {
-                    var tableData = line.Split(';');
-                    Table table = new Table();
-                    table.Id = int.Parse(tableData[0]);
-                    table.Seats = int.Parse(tableData[1]);
-                    table.IsOccupied = bool.Parse(tableData[2]);
-                    tables.Add(table);
-                }
+                return _context.Tables.ToList(); 
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Įvyko klaida nuskaitant failą: " + ex.Message);
+                Console.WriteLine("Error occurred while loading tables from the database: " + ex.Message);
+                return new List<Table>();
             }
-            return tables;
         }
+
         public void SaveTables(Table table)
         {
             try
             {
-                var lines = File.ReadAllLines(_filePath);
-                for (int i = 0; i < lines.Length; i++)
+                var existingTable = _context.Tables.FirstOrDefault(t => t.Id == table.Id);
+                if (existingTable != null)
                 {
-                    var tableData = lines[i].Split(';');
-                    if (int.Parse(tableData[0]) == table.Id)
-                    {
-                        lines[i] = table.Id + ";" + table.Seats + ";" + table.IsOccupied;
-                        break;
-                    }
+                    existingTable.Seats = table.Seats;
+                    existingTable.IsOccupied = table.IsOccupied;
+                    _context.Tables.Update(existingTable);
                 }
-                File.WriteAllLines(_filePath, lines);
+                else
+                {
+                    _context.Tables.Add(table);
+                }
+                _context.SaveChanges(); 
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Įvyko klaida išsaugant failą: " + ex.Message);
+                Console.WriteLine("Error occurred while saving the table to the database: " + ex.Message);
             }
         }
     }

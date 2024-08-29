@@ -18,13 +18,16 @@ namespace RestoranoSistema
     {
         public void Start()
         {
-            IItemsRepository itemsRepository = new ItemsRepository("../../../Data/food.csv", "../../../Data/drinks.csv");
+            RestoranasDbContext dbContext = new RestoranasDbContext(); 
+
+            ITableRepository tableRepository = new TablesRepository(dbContext); 
+
+            IItemsRepository itemsRepository = new ItemsRepository(dbContext);
             IItemsService itemsService = new ItemsService(itemsRepository);
 
-            ITableRepository tableRepository = new TablesRepository("../../../Data/tables.csv");
             ITablesService tableService = new TablesService(tableRepository);
 
-            IOrdersRepository ordersRepository = new OrdersRepository("../../../Data/orders.json");
+            IOrdersRepository ordersRepository = new OrdersRepository(dbContext);
             IOrdersService orderService = new OrdersService(ordersRepository);
 
             IReceiptRepository receiptRepository = new ReceiptsRepository("../../../Data/receipts.csv");

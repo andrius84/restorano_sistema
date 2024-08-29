@@ -1,4 +1,4 @@
-﻿using RestoranoSistema.Models;
+﻿using RestoranoSistema.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using RestoranoSistema.Services.Interfaces;
 using RestoranoSistema.UI.Interfaces;
+using RestoranoSistema.Entities;
 
 namespace RestoranoSistema.UI
 {
@@ -327,7 +328,7 @@ namespace RestoranoSistema.UI
             foreach (var order in orders)
             {
                 Console.WriteLine($"Užsakymo numeris: {order.Id}");
-                Console.WriteLine($"Staliuko numeris: {order.Table.Id}");
+                Console.WriteLine($"Staliuko numeris: {order.TableId}");
                 Console.WriteLine($"Kaina: {order.TotalPrice}");
                 Console.WriteLine("=======================================");
                 Console.WriteLine("");
